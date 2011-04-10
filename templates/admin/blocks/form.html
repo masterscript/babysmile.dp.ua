@@ -1,0 +1,12 @@
+{* форма из шаблона *}
+{$form_html}
+{********************}
+
+{if $errors}
+	<h3>Оперция не выполнена из-за следующих ошибок:</h3>
+{/if}
+{foreach from=$errors key=name item=error}
+	<p class="form-error">
+		Поле: <strong>{$error.label}</strong>. {$error.message}
+	</p>
+{/foreach}

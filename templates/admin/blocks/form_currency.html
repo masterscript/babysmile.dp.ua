@@ -1,0 +1,39 @@
+{* Шаблон мелких баннеров *}
+
+{* форма из шаблона *}
+{$form_html}
+{********************}
+
+{if $errors}
+	<h3>Оперция не выполнена из-за следующих ошибок:</h3>
+{/if}
+{foreach from=$errors key=name item=error}
+	<p class="form-error">
+		Поле: <strong>{$error.label}</strong>. {$error.message}
+	</p>
+{/foreach}
+
+{* валюты *}
+{if $currency}
+<table width="100%" border="0" class="list">
+  <tr>
+    <th>Название</th>
+    <th>Код</th>
+	<th>Курс к гривне</th>
+	<th>По умолчанию</th>
+	<th>Действие</th>
+  </tr>
+  {foreach from=$currency item=v}
+	  <tr style="background:{cycle values="#e7e8e9,#fff"}">
+		<td>{$v.name}</td>
+		<td>{$v.abbr}</td>
+		<td>{$v.rate}</td>
+		<td>{$v.default}</td>
+		<td align="center">
+			<a href="/global/currency_edit?currency_id={$v.id}" title="редактировать"><img src="/img/edit.gif" /></a>&nbsp;&nbsp;&nbsp;
+			<a href="/global/currency?currency_id={$v.id}&amp;mode=delete" title="удалить"><img src="/img/delete.gif" alt="удалить" /></a>			
+		</td>
+	  </tr>
+  {/foreach}
+</table>
+{/if}

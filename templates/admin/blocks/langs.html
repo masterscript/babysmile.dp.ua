@@ -1,0 +1,7 @@
+{foreach from=$data item=lang}
+	{if $lang.current}
+    	<span class="selected"><img title="{$lang.name}" alt="{$lang.name}" src="{$smarty.const.SITE_SUBDIR}/img/flags/{$lang.name}.png" /></span>
+    {else}
+		<a href="{$smarty.const.SITE_SUBDIR}?front_lang={$lang.name}"><img title="{$lang.name}" alt="{$lang.name}" src="{$smarty.const.SITE_SUBDIR}/img/flags/{$lang.name}.png" /></a>
+    {/if}
+{/foreach}

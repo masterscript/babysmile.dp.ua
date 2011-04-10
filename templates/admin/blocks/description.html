@@ -1,0 +1,34 @@
+{literal}
+<style type="text/css">
+textarea {
+	height:100px;
+}
+</style>
+{/literal}
+{* JS код для поддержки функции редактирования "на месте" *}
+	{$jscode}
+<h2>Просмотр</h2>
+{if $element_info}
+<table class="info" width="100%" border="1" cellpadding="5" cellspacing="5">
+{foreach from=$element_info key=element_name item=info}
+	{if $element_name eq 'top_image'}
+		{if $info.value}
+		  <tr>
+			<td colspan="2" align="left" valign="middle" class="caption"><img src="{$info.value}" /></td>
+		  </tr>
+		{/if}
+	{else}
+	  <tr>  	
+		<td width="50%" class="caption" align="right" valign="middle">{$info.label}</td>
+		<td width="50%" align="left" valign="middle">
+			{if $info.js_name}
+				<div class="editable" id="{$info.js_name}">{$info.value}</div>
+			{else}
+				{$info.value}
+			{/if}
+		</td>
+	  </tr>
+	{/if}
+{/foreach}
+</table>
+{/if}

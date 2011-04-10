@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	{literal}<title>{#imgcontent.title}</title>{/literal}
+	<script type="text/javascript" src="{$smarty.const.SITE_SUBDIR}/js/jquery.js"></script>
+	<script type="text/javascript" src="{$smarty.const.SITE_SUBDIR}/js/jquery.livequery.js"></script>
+	<script type="text/javascript" src="{$smarty.const.SITE_SUBDIR}/js/ajaxfileupload.js"></script>
+	<script type="text/javascript" src="{$smarty.const.SITE_SUBDIR}/js/urlparser.js"></script>
+	<script type="text/javascript" src="{$smarty.const.SITE_SUBDIR}/js/tiny_mce/tiny_mce_popup.js"></script>
+	<script type="text/javascript" src="{$smarty.const.SITE_SUBDIR}/js/tiny_mce/plugins/imgcontent/js/dialog.js"></script>
+	
+{literal}
+	<script type="text/javascript">
+	
+		var isDeleteMode = false;
+		
+		function deleteImg (id,src) {
+		
+			if (!isDeleteMode) {
+				return;
+			}
+		
+			if (confirm("Вы действительно хотите удалить это изображение?")) {
+				// поиск удаляемого изображение в контенте
+				$(tinyMCE.activeEditor.dom.getRoot())
+						.find("img")
+						.each( function () {
+							// преобразование src изображения
+							if (tinymce.isIE || tinymce.isOpera) {									
+								var contentImgSrc = $(this).attr("src");
+							} else {
+								var p = new Poly9.URLParser($(this).attr("src"));
+								var contentImgSrc = p.getPathname();								
+							}
+							if (src==contentImgSrc) {
+								// удаляем изображение из контента
+								tinyMCE.activeEditor.dom.remove($(this).get());
+							}
+						});
+				
+				// запрос на удаление изображения на сервере
+				$.getJSON('/ajax/tinymce_img_del',{ id: id },function(data, textStatus) {
+			
+					if (data.msg!='no error') {
+						alert(data.msg);
+					} else {
+						$("#img"+data.id).css("display","none");
+					}
+					isDeleteMode = false;
+					$("#delete").css("display","block");
+					$("#delete-msg").css("display","none");
+					$("#delete-cancel").css("display","none");
+					
+				});							
+				
+			}				
+			
+		}
+		
+		function setDeleteMode () {
+		
+			if (isDeleteMode) {
+				isDeleteMode = false;
+				$("#delete").css("display","block");
+				$("#delete-msg").css("display","none");
+				$("#delete-cancel").css("display","none");
+				return;
+			}
+			
+			isDeleteMode = true;
+			$("#delete").css("display","none");
+			$("#delete-msg").css("display","block");
+			$("#delete-cancel").css("display","block");
+		
+		}
+		
+	</script>
+	
+	<style type="text/css">		
+		img {
+			float:left;
+			border:solid 2px white;
+		}
+		
+		.selected-img {
+			border:solid 2px red;
+		}
+		
+		.delete-img {
+			margin:10px;
+			width:17px;
+			height:14px;
+			float:left;
+			display:inline;
+			background:url(/img/delete.jpg) no-repeat;
+			cursor:pointer;
+		}
+		
+		#img-wrapper {
+			float:left;
+			margin-bottom:30px;
+		}
+		
+		div.inner {
+			float:left;
+			height:120px;
+			width:120px;
+			margin:15px;
+			margin-bottom:30px;
+		}
+		
+		#loading {
+			position:absolute;
+			top:0;
+			right:0;
+			width:32px;
+			height:32px;
+			display:none;
+			background:url(/img/loading.gif) no-repeat;
+		}
+		
+		#delete-msg {
+			display:none;
+		}
+		
+		#delete-cancel, #doUpload {
+			display:none;
+		}
+		
+		#bigimg-options {
+			display:none;
+			margin:10px 0 5px 5px;
+			padding:5px;
+			border:1px solid black;
+			background:#E4E4E4;
+		}
+		
+		#bigimg-options label, #bigimg-options input {
+			display:block;
+		}
+		
+		input.not-active {
+			background-color:#CCCCCC;
+		}
+		
+		#actions {
+			clear:both;			
+		}
+	</style>
+	
+</head>
+<body>
+<div id="img-wrapper">
+{/literal}
+	{foreach from=$images item=img}
+		<div class="inner" id="img{$img.id}">
+			{if $img.isset_big}
+				<img class="content-img big-img" width="{$img.width}" height="{$img.height}" src="{$img.img_path}" id="{$img.id}" name="{$img.big_img_path}" />
+			{else}
+				<img class="content-img" width="{$img.width}" height="{$img.height}" src="{$img.img_path}" id="{$img.id}" />
+			{/if}           
+		</div>
+	{/foreach}
+{literal}
+</div>
+
+<div id="actions">
+    <strong>Выбранное изображение:</strong> <div id="debug">Выберите файл для загрузки</div>
+    <div>
+        <input type="checkbox" name="useBigImg" id="useBigImg" />
+        <label for="useBigImg">использовать функцию полноразмерного просмотра</label>
+        <div id="bigimg-options">
+            <label for="img-width">ширина, <em>px</em>:</label> <input type="text" name="img-width" id="img-width" />
+            <label for="img-height">высота, <em>px</em>:</label> <input type="text" name="img-height" id="img-height" />
+            <label for="img-percent">процент уменьшения, <em>%</em>:</label> <input type="text" name="img-percent" id="img-percent" />
+        </div>
+    </div>
+    
+    <div id="loading"></div>
+    <form name="form" action="" method="POST" enctype="multipart/form-data">
+		<input type="checkbox" name="useWatermark" id="useWatermark" checked="checked" />
+		<label for="useWatermark">выполнить наложение водяного знака на изображение</label>
+        <input type="hidden" name="content_id" id="content_id" value="{/literal}{$smarty.get.content_id}{literal}" />
+        <input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+        <input id="upl_file" type="file" size="45" name="upl_file" />
+        <input id="doUpload" type="button" value="Выполнить загрузку изображения" />
+    </form>
+    
+    <form onsubmit="ImgContentDialog.insert();return false;" action="#">
+        <input id="img_src" name="img_src" type="hidden" />	
+        <div class="mceActionPanel">
+            <div style="float: left" id="img-del">
+                <div id="delete-msg">Щелкните на изображение для удаления</div>
+                <input type="button" id="delete-cancel" name="delete-cancel" value="{#imgcontent.deletecancel}" onclick="setDeleteMode();" />
+                <input type="button" id="delete" name="delete" value="{#imgcontent.deleteimg}" onclick="setDeleteMode();" />
+            </div>
+            <div style="float: right">
+                <input type="button" id="cancel" name="cancel" value="{#imgcontent.close}" onclick="tinyMCEPopup.close();" />
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+{/literal}

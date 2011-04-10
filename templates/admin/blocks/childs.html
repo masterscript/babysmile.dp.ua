@@ -1,0 +1,92 @@
+﻿{if $childs.count>0}
+	<script type="text/javascript" src="{$smarty.const.SITE_SUBDIR}/js/childs_actions.js"></script>
+	<h2>Дочерние элементы</h2>
+	<div style="text-align:center;margin:10px">{$links.all}</div>
+	<div style="text-align:left">
+	{if $smarty.get.mode eq 'all'}
+		<a href="{$smarty.const.SITE_SUBDIR}/view?id={$smarty.get.id}">показать дочерние элементы текущего контейнера</a>
+	{else}	
+		<a href="{$smarty.const.SITE_SUBDIR}/view?id={$smarty.get.id}&amp;mode=all">показать все элементы, включая подуровни</a>
+	{/if}
+	</div>
+	<form name="childs" id="childs-form">
+		<input type="hidden" name="id" value="{$smarty.get.id}" />
+		<input type="hidden" name="mode" value="{$smarty.get.mode}" />
+		<input type="hidden" name="sort_name" value="{$smarty.get.sort_name}" />
+		<input type="hidden" name="sort_direction" value="{$smarty.get.sort_direction}" />
+		<table width="100%" border="0" class="childs list">
+		  <tr>
+				{foreach from=$childs.fields key=name item=field}
+					{* исключаем поля с признаком show="-" *}
+					{if $childs.fields[$name].show neq '-'}                    	
+						<th scope="col" align="center">
+                        	<div class="title">
+                                <table cellpadding="0" cellspacing="0" class="inner-table" width="100%" border="0">
+                                  <tr>
+                                    <td align="left" valign="middle">
+                                        {$field.label}<br />
+                                        <input type="hidden" name="field" value="{$name}" />
+                                        {if $field.filter}
+                                            <div class="filter">
+                                                <input type="text" name="{$name}" id="{$name}" />
+                                                <img class="actionFilter" src="{$smarty.const.SITE_SUBDIR}/img/filter.gif" title="фильтр только по этому значению" />
+                                                <img class="actionFilterAdd" src="{$smarty.const.SITE_SUBDIR}/img/filter_add.gif" title="добавить фильтр к текущим" />
+                                            </div>
+                                        {/if}
+                                    </td>
+                                    <td align="right" valign="middle">
+                                        {if $field.sort}
+                                            <div class="sort">
+                                                {if ($name eq $smarty.get.sort_name && $smarty.get.sort_direction eq 'desc')
+                                                    || ($childs.sort_field eq $name && $childs.sort_direction|lower eq 'desc')}
+                                                    <img src="{$smarty.const.SITE_SUBDIR}/img/sort_desc_noactive.gif" title="текущая сортировка" />
+                                                {else}
+                                                    <img class="actionSortDesc" src="{$smarty.const.SITE_SUBDIR}/img/sort_desc_active.gif" title="сортировать по убыванию" />
+                                                {/if}
+                                                <br />
+                                                {if ($name eq $smarty.get.sort_name && $smarty.get.sort_direction eq 'asc')
+                                                    || ($childs.sort_field eq $name && $childs.sort_direction|lower eq 'asc')}
+                                                    <img src="{$smarty.const.SITE_SUBDIR}/img/sort_asc_noactive.gif" title="текущая сортировка" />
+                                                {else}
+                                                    <img class="actionSortAsc" src="{$smarty.const.SITE_SUBDIR}/img/sort_asc_active.gif" title="сортировать по возрастанию" />
+                                                {/if}
+                                            </div>
+                                        {/if}
+                                    </td>
+                                  </tr>
+                                </table>
+							</div>
+						</th>
+					{/if}
+				{/foreach}
+				{if $childs.actions}
+					<th align="center" scope="col">				
+						<div class="title">					
+							Действия					
+						</div>
+					</th>
+				{/if}
+		  </tr>
+		{foreach from=$childs.data item=child}
+			<tr style="background:{cycle values="#e7e8e9,#fff"}">
+				{* проход по полям *}
+				{foreach from=$child key=name item=data}
+					{* исключаем поля с признаком show="-" *}
+					{if $childs.fields[$name].show neq '-'}
+						<td>{$data}</td>
+					{/if}
+				{/foreach}
+				{if $childs.actions}
+					<td width="10%" align="center">				
+						{assign var="id_key" value="items::id"}
+						<a href="{$smarty.const.SITE_SUBDIR}/edit?id={$child[$id_key]}" title="редактировать элемент"><img src="{$smarty.const.SITE_SUBDIR}/img/edit.gif" width="16" height="16" /></a>&nbsp;&nbsp;&nbsp;
+						<a href="{$smarty.const.SITE_SUBDIR}/edit/delete?id={$child[$id_key]}" title="удалить элемент"><img src="{$smarty.const.SITE_SUBDIR}/img/delete.gif" width="16" height="16" /></a>				
+					</td>
+				{/if}
+			</tr>
+		{foreachelse}
+			нет дочерних элементов, удовлетворяющих запросу
+		{/foreach}  
+		</table>
+	</form>
+{/if}

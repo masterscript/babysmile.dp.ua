@@ -1,0 +1,129 @@
+﻿	<script type="text/javascript" src="/js/childs_actions.js"></script>
+	<script type="text/javascript" src="/js/goods_available.js"></script>
+	<h2>Доступность товаров на складе</h2>
+	<div style="text-align:center;margin:10px">{$links.all}</div>
+	<div style="text-align:left">
+	</div>
+	<form name="childs" id="childs-form">
+    	<input type="hidden" name="id" value="{$smarty.get.id}" />
+		<input type="button" onclick="window.location='/view/goodsavailable?id={$smarty.get.id}'" value="Показать все" />
+		<input type="hidden" name="sort_name" value="{$smarty.get.sort_name}" />
+		<input type="hidden" name="sort_direction" value="{$smarty.get.sort_direction}" />
+		<table width="100%" border="0" class="purchase list">
+		  <tr>
+			<th scope="col" align="center">
+				<div class="title">
+					Товар<br />
+					<input type="hidden" name="field" value="name" />
+					<div class="filter">
+						<input type="text" name="name" id="name" />
+						<img class="actionFilter" src="/img/filter.gif" />
+						<img class="actionFilterAdd" src="/img/filter_add.gif" />
+					</div>
+					<div class="sort">
+						{if 'name' eq $smarty.get.sort_name && $smarty.get.sort_direction eq 'desc'}
+							<img src="/img/sort_desc_noactive.gif" />
+						{else}
+							<img class="actionSortDesc" src="/img/sort_desc_active.gif" />
+						{/if}
+						<br />
+						{if 'name' eq $smarty.get.sort_name && $smarty.get.sort_direction eq 'asc'}
+							<img src="/img/sort_asc_noactive.gif" />
+						{else}
+							<img class="actionSortAsc" src="/img/sort_asc_active.gif" />
+						{/if}
+					</div>
+				</div>
+			</th>
+			<th scope="col" align="center">
+				<div class="title">
+					Описание<br />
+					<input type="hidden" name="field" value="description" />
+					<div class="filter">
+						<input type="text" name="description" id="description" />
+						<img class="actionFilter" src="/img/filter.gif" />
+						<img class="actionFilterAdd" src="/img/filter_add.gif" />
+					</div>
+					<div class="sort">
+						{if 'description' eq $smarty.get.sort_name && $smarty.get.sort_direction eq 'desc'}
+							<img src="/img/sort_desc_noactive.gif" />
+						{else}
+							<img class="actionSortDesc" src="/img/sort_desc_active.gif" />
+						{/if}
+						<br />
+						{if 'description' eq $smarty.get.sort_name && $smarty.get.sort_direction eq 'asc'}
+							<img src="/img/sort_asc_noactive.gif" />
+						{else}
+							<img class="actionSortAsc" src="/img/sort_asc_active.gif" />
+						{/if}
+					</div>
+				</div>
+			</th>			
+			<!--<th scope="col" align="center">
+				<div class="title">
+					Цена<br />
+					<input type="hidden" name="field" value="price" />
+					<div class="filter">
+						<input type="text" name="price" id="price" />
+						<img class="actionFilter" src="/img/filter.gif" />
+						<img class="actionFilterAdd" src="/img/filter_add.gif" />
+					</div>
+					<div class="sort">
+						{if 'price' eq $smarty.get.sort_name && $smarty.get.sort_direction eq 'desc'}
+							<img src="/img/sort_desc_noactive.gif" />
+						{else}
+							<img class="actionSortDesc" src="/img/sort_desc_active.gif" />
+						{/if}
+						<br />
+						{if 'price' eq $smarty.get.sort_name && $smarty.get.sort_direction eq 'asc'}
+							<img src="/img/sort_asc_noactive.gif" />
+						{else}
+							<img class="actionSortAsc" src="/img/sort_asc_active.gif" />
+						{/if}
+					</div>
+				</div>
+			</th>-->			
+			<th scope="col" align="center">
+				<div class="title">
+					Доступность<br />
+					<input type="hidden" name="field" value="availability" />
+					<div class="filter">
+						<div style="width:50px;">
+							<a href="?availability=0&amp;id={$smarty.get.id}"><img src="/img/status_0.gif" /></a>
+							<a href="?availability=1&amp;id={$smarty.get.id}"><img src="/img/status_1.gif" /></a>
+						</div>
+					</div>
+					<div class="sort single">
+						{if 'availability' eq $smarty.get.sort_name && $smarty.get.sort_direction eq 'desc'}
+							<img src="/img/sort_desc_noactive.gif" />
+						{else}
+							<img class="actionSortDesc" src="/img/sort_desc_active.gif" />
+						{/if}
+						<br />
+						{if 'availability' eq $smarty.get.sort_name && $smarty.get.sort_direction eq 'asc'}
+							<img src="/img/sort_asc_noactive.gif" />
+						{else}
+							<img class="actionSortAsc" src="/img/sort_asc_active.gif" />
+						{/if}
+					</div>
+				</div>
+			</th>
+		  </tr>
+		{foreach from=$data item=v}
+			<tr style="background:{cycle values="#e7e8e9,#fff"}; cursor:pointer" title="Нажмите для изменения доступности" class="changeAvailable">
+            	<input type="hidden" name="good_id" value="{$v.id}" />
+				<td>
+                	<!--<a href="{$smarty.const.FRONT_SITE_URL}{$v.url}" target="_blank" title="{$v.title}">{$v.name}</a>-->
+                    {$v.name}
+                </td>
+				<td>{$v.description}</td>
+				<!--<td>{$v.price}</td>-->
+				<td align="center">
+                	<img class="status" style="cursor:pointer" src="/img/status_{$v.availability}.gif" />                    
+                </td>
+			</tr>
+		{foreachelse}
+			нет товаров, удовлетворяющих запросу
+		{/foreach}		
+		</table>
+	</form>

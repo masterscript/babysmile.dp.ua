@@ -1,0 +1,25 @@
+﻿{if $childs}
+<script type="text/javascript" src="/js/jquery.tablednd.js"></script>
+<script type="text/javascript">
+{literal}
+$(document).ready(function () {
+	$('#table-sort').tableDnD({
+		onDrop: function(table, row) {
+			$.post("/ajax/sort_childs",$.tableDnD.serialize());
+		}
+	});
+});
+{/literal}
+</script>
+<h2>Сортировка</h2>
+<table id="table-sort" class="list" cellspacing="0" cellpadding="2" width="80%">
+{foreach from=$childs item=child}
+    <tr id="{$child.id}" style="cursor:move; background:{cycle values="#e7e8e9,#fff"}">
+		<td>{$child.name}</td>
+		<td>{$child.title}</td>
+	</tr>
+{/foreach}
+</table>
+{else}
+	Нет элементов, к которым можно применить сортировку
+{/if}

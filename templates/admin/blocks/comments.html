@@ -1,0 +1,64 @@
+﻿<script type="text/javascript" src="/js/comment.js"></script>
+<h2>Администрирование комментариев</h2>
+{if $comments}
+<form method="get" name="formSearch">
+	<table width="90%" cellpadding="5" cellspacing="0" border="0">
+                		<tr>
+                			<td align="right"><label {if $smarty.get.date1} style="color:red" {/if} for="date1">Дата от:</label></td>
+                			<td><input type="text" name="date1" value="{$smarty.get.date1}" /></td>
+                			<td align="right"><label {if $smarty.get.name} style="color:red" {/if} for="name">Фильтр по элементу:</label></td>
+							<td><input type="text" name="name" value="{$smarty.get.name}" /></td>
+                			<td align="right"><label {if $smarty.get.user_email} style="color:red" {/if} for="user_email">E-mail:</label></td>
+							<td><input type="text" name="user_email" value="{$smarty.get.user_email}" /></td>
+                			<td align="center" valign="middle" rowspan="2">
+                				<input type="submit" name="search" value="Поиск" />
+								<input type="button" name="reset" value="Сброс" onclick="window.location='/global/comments'" />
+							</td>
+                		</tr>
+                		<tr>
+                		  <td align="right"><label {if $smarty.get.date2} style="color:red" {/if} for="date2">Дата до:</label></td>
+                		  <td><input type="text" name="date2" value="{$smarty.get.date2}" /></td>
+                		  <td align="right"><label {if $smarty.get.text} style="color:red" {/if} for="text">Текст комментария:</label></td>
+                		  <td><input type="text" name="text" value="{$smarty.get.text}" /></td>
+                		  <td align="right"><label {if $smarty.get.user_name} style="color:red" {/if} for="user_name">Ник:</label></td>
+                		  <td><input type="text" name="user_name" value="{$smarty.get.user_name}" /></td>
+              		  </tr>
+                		<tr>
+							<td align="right">Просмотр элементу:</td>
+							<td colspan="2" align="left"><input type="hidden" name="item_id" value="" />
+						    <span style="color:red">{$name|default:'<span style="color:gray">элемент не выбран</span>'}</span></td>
+							<td colspan="2" align="right"><label {if $smarty.get.ip} style="color:red" {/if} for="ip">IP адрес: </label></td>
+							<td><input type="text" name="ip" value="{$smarty.get.ip}" /></td>
+                		    <td align="center" valign="middle"></td>
+                		</tr>
+					</table>
+</form>
+<div>{$links.all}</div>
+<table width="100%" border="0" class="list comments" cellspacing="0">
+  <tr>
+    <th scope="col">Дата</th>
+    <th scope="col">Элемент</th>
+    <th scope="col">Текст</th>
+    <th scope="col">E-mail</th>
+    <th scope="col">Ник</th>
+    <th scope="col">IP адрес</th>
+    <th scope="col">Действие</th>
+  </tr>
+  {foreach from=$comments item=comment}
+	  <tr style="background:{cycle values="#fff,#e7e8e9"}">	  	
+		<td width="10%">
+			<input type="hidden" name="comment_id" value="{$comment.id}" />
+			{$comment.date}
+		</td>
+		<td width="10%">{$comment.name}&nbsp;&nbsp;<a href="/global/comments?item_id={$comment.item_id}"><img src="/img/filter.jpg" /></a></td>
+		<td width="40%" class="editable"><div class="text">{$comment.commentText}</div></td>
+		<td width="10%" class="editable"><div class="user_email">{$comment.user_email}</div><a href="/global/comments?user_email={$comment.user_email}"><img src="/img/filter.jpg" /></a></td>
+		<td width="10%" class="editable"><div class="user_name">{$comment.username}</div><a href="/global/comments?user_name={$comment.username}"><img src="/img/filter.jpg" /></a></td>
+		<td width="10%">{$comment.user_ip}&nbsp;&nbsp;<a href="/global/comments?ip={$comment.user_ip}"><img src="/img/filter.jpg" /></a></td>
+		<td width="10%" class="rowControls"><img src="/img/edit.gif" class="process-edit" title="редактировать" />&nbsp;&nbsp;&nbsp;<img src="/img/delete.gif" class="process-delete" title="удалить" /></td>
+	  </tr>
+  {/foreach}
+</table>
+{else}
+	комментариев нет
+{/if}

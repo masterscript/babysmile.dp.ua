@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Система администрирования сайта</title>
+<link href="/styles/layout.css" rel="stylesheet" type="text/css" />
+<link href="/styles/tree_my/style.css" rel="stylesheet" type="text/css" />
+<script src="/js/jquery.js" type="text/javascript"></script>
+</head>
+
+<body>
+	<div id="masthead">
+    	<img id="logo" src="/img/logo.gif" alt="baby-smile" />
+		<div id='headname'><h2>Система управления порталом</h2></div></div>
+		<div id="langs">{$LANGS}</div>
+		{if $user.login}
+        <div id="login_info">
+			<p>Вы вошли как {$user.login} [<em>{$user.group_name}</em>] <a href="?logout">Выход</a></p>
+		</div>
+		{/if}
+	<div id='main_menu'><div id='top_menu_row'>&nbsp;</div><div class='menu_row'>{$ACTIONS_PANEL}</div></div>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	  <tr>
+		<td width="10%" align="left" valign="top" style="border-right:#a7790b 1px solid; background-color:#f7f4ee;">{$TREE}</td>
+		<td width="90%" align="left" valign="top">
+			<div class="shell">
+				<div id="forms">
+					{$FORM}
+				</div>
+				<div id="detail-info">
+					{$ELEMENT_INFO}
+				</div>
+				<div id="child-nodes">
+					{$CHILD_NODES}
+				</div>
+			</div>
+		</td>
+	  </tr>
+	</table>
+</body>
+</html>

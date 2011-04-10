@@ -1,0 +1,32 @@
+{* Шаблон типов объявления *}
+
+{* форма из шаблона *}
+{$form_html}
+{********************}
+
+{if $errors}
+	<h3>Оперция не выполнена из-за следующих ошибок:</h3>
+{/if}
+{foreach from=$errors key=name item=error}
+	<p class="form-error">
+		Поле: <strong>{$error.label}</strong>. {$error.message}
+	</p>
+{/foreach}
+
+{if $items}
+<table width="100%" border="0" class="list">
+  <tr>
+    <th>Название</th>
+	<th>Действие</th>
+  </tr>
+  {foreach from=$items item=v}
+	  <tr style="background:{cycle values="#e7e8e9,#fff"}">
+		<td>{$v.name}</td>
+		<td align="center">
+			<a href="/global/instype_edit?instype_id={$v.id}&amp;id={$smarty.get.id}" title="редактировать"><img src="/img/edit.gif" /></a>&nbsp;&nbsp;&nbsp;
+			<a href="/global/instypes?instype_id={$v.id}&amp;mode=delete&amp;id={$smarty.get.id}" title="удалить"><img src="/img/delete.gif" alt="удалить" /></a>			
+		</td>
+	  </tr>
+  {/foreach}
+</table>
+{/if}

@@ -1,0 +1,54 @@
+{if $actions.item}
+	{foreach from=$actions.item item=action}				
+		{if $action.type neq 'group' && $action.display eq 1}
+		<ul>
+			<li>
+				{if $action.is_current}
+					<span class="current">{$action.name}</span>
+				{else}
+					<a href="{$action.url}">{$action.name}</a>
+				{/if}
+			</li>
+		</ul>
+		{/if}
+		{* Дочерние действия *}
+		{if $action.actions}
+			<ul>
+				{foreach from=$action.actions item=child}		
+					{if $child.is_current && $child.display eq 1}
+						<span class="current">{$child.name}</span>
+					{elseif $child.display eq 1}
+						<li><a href="{$child.url}">{$child.name}</a></li>
+					{/if}
+				{/foreach}
+			</ul>
+		{/if}
+	{/foreach}
+{/if}
+{if $actions.global}
+	{foreach from=$actions.global item=action}
+		{if $action.type neq 'group' && $action.display eq 1}
+		<ul>
+			<li>
+				{if $action.is_current}
+					<span class="current">{$action.name}</span>
+				{else}
+					<a href="{$action.url}">{$action.name}</a>
+				{/if}
+			</li>
+		</ul>
+		{/if}
+		{* Дочерние действия *}
+		{if $action.actions}
+			<ul>
+				{foreach from=$action.actions item=child}		
+					{if $child.is_current && $child.display eq 1}
+						<span class="current">{$child.name}</span>
+					{else}
+						<li><a href="{$child.url}">{$child.name}</a></li>
+					{/if}
+				{/foreach}
+			</ul>
+		{/if}
+	{/foreach}
+{/if}
