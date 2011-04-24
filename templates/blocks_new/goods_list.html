@@ -1,0 +1,98 @@
+<!-- List START -->
+<script type="text/javascript" src="/js/catalogFilters.js"></script>
+<div id="list">
+	<h1 class="first">{$page->getName()}</h1>
+    
+    <h1 class="no_mar">ФИЛЬТР</h1>
+    
+    <div id="filterControls">
+	    <div id="mask"></div>
+		<div id="filters">
+			<h1>ФИЛЬТРЫ</h1>
+			{assign var=filters value=$page->getCatalogFilters($params)}
+			<input name="priceMmin" type="hidden" value="{$filters.price.mmin}"/><input name="priceMmax" type="hidden" value="{$filters.price.mmax}"/>
+		    <form method="get" action="{$page->getUrl()}">		    	
+			    <table>
+			    	<tr class="price">
+			        	<td width="140"{if !$smarty.get.price} class="grey"{/if}>
+			        		<label><input name="price" type="checkbox" value="1"{if $smarty.get.price} checked="checked"{/if} /> цена:</label>
+			        	</td>
+			        	<td width="533">
+			        		<div class="range">{$filters.price.min}-{$filters.price.max}</div>
+			        		<div class="slider"></div>
+			        		<input name="priceMin" type="hidden" value="{$filters.price.min}"/>
+			        		<input name="priceMax" type="hidden" value="{$filters.price.max}"/>
+			        	</td>
+			        </tr>
+			    	<tr>
+			        	<td width="140"{if !$smarty.get.name} class="grey"{/if}>
+			        		<label><input name="name" type="checkbox"{if $smarty.get.name} checked="checked"{/if} /> название:</label>
+			        	</td>
+			        	<td width="533"><input name="name" type="text" value="buzz" /></td>
+			        </tr>
+			    	<tr>
+			        	<td width="140"{if !$smarty.get.vendor} class="grey"{/if}>
+			        		<label><input name="vendor" type="checkbox" value="1"{if $smarty.get.vendor} checked="checked"{/if} /> производитель:</label>
+			        	</td>
+			        	<td width="533">
+			        		<a href="#">BMW</a>, <a href="#" class="checked">Mercedes</a>, <a href="#" class="checked">Volkswagen</a>, <a href="#">GM</a>, <a href="#">Ford</a>, <a href="#">Mazda</a>, <a href="#">Honda</a>
+			        	</td>
+			        </tr>
+			    	<tr>
+			        	<td width="140"{if !$smarty.get.discount} class="grey"{/if}>
+			        		<label><input name="discount" type="checkbox" value="1"{if $smarty.get.discount} checked="checked"{/if} /> скидка</label>
+			        	</td>
+			        	<td width="533"></td>
+			        </tr>
+			    </table>
+			        
+			    <div class="buttons">
+			        <a class="apply" href="#">применить</a>
+			        <a class="close" href="#">закрыть</a>
+			        <a class="cancel" href="{$page->getUrl()}">отменить все</a>
+			    </div>
+			</form>
+		</div>
+	</div>
+    
+    <div class="filter_double">
+    	<div class="left">
+        	<div>фильтр не задан <span>показаны все  46 товаров</span></div>
+            <a id="setFilter" href="#">задать фильтр</a>
+        </div>
+        
+        <div class="right">
+        	<a href="#" class="up">сначала дешевле</a>
+        </div>
+    </div>
+    
+    <div class="content">
+    	{foreach name=cat from=$page->getGoodList($params) item=item}
+			{if $smarty.foreach.cat.iteration%3 eq 1 || $smarty.foreach.cat.first}
+    		<div class="row">
+    		{/if}
+	        	<div class="block">
+	        		{if $item->getImage(true)}
+	            	<div class="image">
+	            		<a href="{$item->url}">
+	            			<img class="hover" src="{$item->getImage(true)}" alt="{$item->name|escape}" title="{$item->title|escape}" />
+	            			{if $item->getHoverImage()}
+	            				<input type="hidden" name="hover_src" value="{$item->getHoverImage()}" />
+	            			{/if}
+	            		</a>
+	            	</div>
+	            	{/if}
+	                <div class="link"><a href="#">{$item->name|escape}</a></div>
+	                <div class="info">{$item->description|escape|nl2br}</div>
+	                <div class="price">{$item->price|convert_currency}</div>
+	            </div>
+	        {if $smarty.foreach.cat.iteration%3 eq 0 || $smarty.foreach.cat.last}
+        	</div>
+        	{/if}
+        {/foreach}
+    </div>
+    {if isset($params.numerator_name)}
+		{include file='template_parts/page_numerator.html' numerator_name=$params.numerator_name}
+	{/if}
+</div>
+<!-- List START -->

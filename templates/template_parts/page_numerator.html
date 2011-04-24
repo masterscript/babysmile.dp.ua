@@ -1,7 +1,9 @@
 {if $page->getNumeratorCount($numerator_name)>1}
-<div class='pagenumerator'>
+<ul class="pages">
 {foreach from=$page->getNumerator($numerator_name) item=num}
-	{if isset($num.link)}<a href='{$num.link}{$page->getNumeratorAnchor($numerator_name)}'>{/if}{if isset($num.current)}<span class='cur_page'>{/if}{$num.name}{if isset($num.current)}</span>{/if}{if isset($num.link)}</a>{/if} 
+   	<li{if isset($num.current)} class="current"{/if}>
+    	<a href="{$num.link}{$page->getNumeratorAnchor($numerator_name)}">{$num.name}</a>
+    </li>
 {/foreach}
-</div>
+</ul>
 {/if}

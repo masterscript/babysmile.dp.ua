@@ -1,0 +1,11 @@
+<!-- Header submenu START -->
+{foreach from=$page->getSubCatalogMenu($params) item=level key=levelNum}
+<ul id="{if $levelNum eq 0}header_submenu{else}header_subsubmenu{/if}">
+	{foreach from=$level item=item}
+    	<li{if $page->isChild($item->getUrl()) || strpos($item->getUrl(), $page->getUrl()) neq false} class="current"{/if}>
+    		<a href="{$item->getUrl()}" title="{$item->getTitle()}">{$item->getName()}</a>
+    	</li>
+	{/foreach}
+</ul>
+{/foreach}
+<!-- Header submenu END -->

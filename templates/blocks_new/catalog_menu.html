@@ -1,0 +1,10 @@
+<!-- Main page categories START -->
+<div id="main_categories">
+	<ul>
+	{foreach name=menu from=$page->catalog_menu($params) item=menu_item}
+    	<li><a href="{$menu_item.url}" title="{$menu_item.title}">{$menu_item.name}</a></li>
+    {/foreach}
+    </ul>
+    <div class="pic"><img src="/images/main_categories_image.jpg" alt="" width="515" height="257" /></div>
+</div>
+<!-- Main page categories END -->

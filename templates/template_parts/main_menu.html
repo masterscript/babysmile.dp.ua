@@ -1,9 +1,7 @@
-<ul id="mainmenu">
-	{foreach name=menu from=$page->main_menu($params) item=menu_item}
-		{if $menu_item.url neq $page->getUrl()}
-			<li><div class="floating"><div><div><a href="{if $menu_item.url eq ''}/{else}{$menu_item.url}{/if}">{$menu_item.name}</a></div></div></div></li>
-		{else}
-			<li><div class="floating"><div><div><strong>{$menu_item.name}</strong></div></div></div></li>
-		{/if}
-	{/foreach}
+<ul id="header_menu">
+	{foreach name=menu from=$page->main_menu($params) item=menu_item}		
+    <li{if $menu_item.url eq $page->getUrl()} class="current"{/if}>
+   		<a href="{if $menu_item.url eq ''}/{else}{$menu_item.url}{/if}" title="{$menu_item.title}">{$menu_item.name}</a>
+    </li>
+    {/foreach}
 </ul>

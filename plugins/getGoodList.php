@@ -1,5 +1,5 @@
 <?php
-function list_good($obj) {
+function getGoodList($obj) {
     	
     if ($obj->issetParam('count') && $obj->issetParam('numerator_name')) {
         $obj->setNumerator(
@@ -16,8 +16,9 @@ function list_good($obj) {
 		FROM items i
 		LEFT JOIN goods g ON i.id = g.id
 		LEFT JOIN top_images ti ON ti.id = i.id 
-		WHERE (type = ? OR type = ? OR template = ? OR template = ?) AND pid = ? and protected<=?d
-		ORDER BY type, sort, create_date DESC {limit ?d,?d}','good','good_set','subcategory','clothers_container',$obj->getId(),user::getAccessLevel(),$obj->getLimitFrom(),$obj->getLimitCount()
+		WHERE (type = ? OR type = ? OR template = ? OR template = ?) AND url LIKE ? and protected<=?d
+		ORDER BY type, sort, create_date DESC {limit ?d,?d}',
+		'good', 'good_set', 'subcategory', 'clothers_container', $obj->getUrl() . '/%', user::getAccessLevel(),$obj->getLimitFrom(),$obj->getLimitCount()
     );
     
     foreach ($items as $item) {

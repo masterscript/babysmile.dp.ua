@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="google-site-verification" content="PEz0RQnDRsBI2TRIl_5r2jgjXzfIm9e8zvX8OFJeZGw" />
+	<meta name="keywords" content="интернет магазин детских колясок, коляски для новорожденных, детские прогулочные коляски, купить коляску, купить детскую коляску, продажа детских колясок, игрушки для детей" />
+	<meta name="description" content="интернет магазин детских колясок, коляски для новорожденных, детские прогулочные коляски, купить коляску, купить детскую коляску, продажа детских колясок, игрушки для детей" />
+    <link href="/css/main.css" rel="stylesheet" type="text/css" media="all" />
+    <link rel="stylesheet" type="text/css" href="/js/jquery.ui/css/start/jquery-ui-1.8.1.custom.css" />
+	<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <title>{$page->getTitle()} :: Babysmile</title>
+    
+    <script type="text/javascript" src="/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/jquery.ui/jquery-ui-1.8.1.custom.min.js"></script>
+	
+	<script type="text/javascript" src="/js/shop_cart.js"></script>
+	<script type="text/javascript" src="/js/common.js"></script>
+	<script type="text/javascript" src="/js/catalog_menu.js"></script>
+	
+	{literal}	
+	<script type="text/javascript"> 
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); 
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); 
+	</script> 
+	<script type="text/javascript"> 
+	try { 
+	var pageTracker = _gat._getTracker("UA-5639349-2"); 
+	pageTracker._trackPageview(); 
+	} catch(err) {}</script>
+	
+	<!--[if lt IE 7]>
+	<![if gte IE 5.5]>
+	<script type="text/javascript" src="/js/fixMinWidth.js"></script>
+	<script type="text/javascript" src="/js/fixpng.js"></script>
+	<style type="text/css"> 
+	.iePNG, IMG { filter:expression(fixPNG(this)); } 
+	.iePNG A { position: relative; }
+	</style>
+	<![endif]>
+	<![endif]-->
+	{/literal}
+</head>
+
+<body>
+
+<!-- Header START -->
+<div id="header">
+	<!-- Header logo START -->
+    <div id="header_logo"><a href="#"><img src="/images/header_logo.png" alt="Baby Smile" width="211" height="69" /></a></div>
+    <!-- Header logo END -->
+	{foreach from=$page->getConfigValue('HEADER') item=template_info}
+		{include file=$template_info.file params=$template_info}
+	{/foreach}
+</div>
+<!-- Header END -->
+
+<!-- Wrapper START -->
+<div id="wrapper">
+    <!-- Header menu START -->
+    {include file='../templates/template_parts/main_menu.html'}
+    <!-- Header menu END -->
+	
+	{foreach from=$page->getConfigValue('CENTER_COLUMN') item=template_info}
+		{include file=$template_info.file params=$template_info}
+	{/foreach}        
+
+    <!-- Double text START -->
+    <div id="double_text">
+        {foreach from=$page->getConfigValue('BOTTOM') item=template_info}
+			{include file=$template_info.file params=$template_info}
+		{/foreach}
+    </div>
+    <!-- Double text END -->
+    
+    <!-- Footer START -->
+    <div id="footer">
+    	&copy; Baby Smyle 2008-{$smarty.now|date_format:"%Y"}
+    </div>
+    <!-- Footer END -->
+</div>
+<!-- Wrapper END -->
+</body>
+</html>
