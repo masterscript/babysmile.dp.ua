@@ -1,0 +1,1 @@
+update `items` set url = concat('/catalog', url) where id = 1017;

@@ -1,0 +1,1 @@
+update `items` set template='category' where template='subcategory';

@@ -1,0 +1,1 @@
+update `items` set menu_item = 1 where template='category';
