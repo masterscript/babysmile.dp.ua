@@ -10,7 +10,10 @@ function getSubCatalogMenu($page) {
 	$menu = array();
 	do {
 		$currentItem = array_pop($currentItem->getParents());
-		$menu[] = $currentItem->getChildren('menu_item');
+		$children = $currentItem->getChildren('menu_item');
+		if ($children) {
+			$menu[] = $children;
+		}
 	} while ($currentItem->getTemplate() !== 'catalog');
 	// }}}
 	
@@ -20,9 +23,11 @@ function getSubCatalogMenu($page) {
 	if ($page->getTemplate() !== 'catalog') {
 		$childrenType = db::getDB()->selectCol('SELECT DISTINCT type FROM ?_items WHERE pid = ?d', $page->getId());
 		if (!in_array('good', $childrenType)) {
-			$menu[] = $page->getChildren('menu_item');
+			$children = $page->getChildren('menu_item');
+			if ($children) {
+				$menu[] = $children;
+			}
 		}
 	}
-	return $menu;
-    
+	return $menu;    
 }

@@ -243,9 +243,11 @@ ul.pages {text-align:center; margin:20px 0 32px 0; font-size:23px}
 	
 #filters {position:absolute; width:680px; padding:7px 35px 35px 20px; border:solid 8px #c0b5d8; z-index:11; background-color:#FFF; top:313px; left:50%; margin:0 0 0 -373px}
 	#filters h1 {color:#e5d9ea; text-align:right}
+	#filters div.status { background:#e5d9ea; text-align:center; width:60%; font-size:80%; font-weight:bold; position: absolute; top:15px; left:15%px; -moz-border-radius:10px; opacity:0.6; }
 	#filters table td {padding:5px 0; letter-spacing:-0.5px}
 	#filters table td:first-child {color:#624199}
 	#filters table td.grey {color:#a6a8ab}
+	#filters table td label { cursor:pointer; }
 	#filters input[type="text"] {width:530px}
 	#filters input[type="checkbox"] {vertical-align:middle; position:relative; top:-1px}
 	#filters table a {color:#a6a8ab}

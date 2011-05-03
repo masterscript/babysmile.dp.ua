@@ -550,7 +550,7 @@ class current_page extends page
 	
 	function __construct($params)
 	{
-		$this->sources = Sources::getInstance($this);
+		$this->sources = Sources::getInstance($this);						
 		
 		if (substr($params,0,7)=='/_mark/')
 		{
@@ -576,6 +576,37 @@ class current_page extends page
 		
 		if ($page_attr['template']!='') $this->template=$page_attr['template'];
 		else $this->template=config::getTemplatesValue($this->type); //если поле шаблона пустое - берем из конфига стандартный шаблон для данного типа страниц
+	}
+	
+	private function _implodeQueryParams($params, $name=null)
+	{
+		$ret = ''; 
+		foreach($params as $key=>$val) {
+			if(is_array($val)) {
+				if($name==null) $ret .= $this->_implodeQueryParams($val, $key);
+				else $ret .= $this->_implodeQueryParams($val, $name."[$key]");
+		    } else {
+				if($name!=null) $ret.=$name."[$key]"."=$val&";
+				else $ret.= "$key=$val&";
+		    }
+		}
+		return $ret;
+	}
+	
+	public function getQueryString()
+	{
+		$excludeParams = func_get_args();
+		if (!$excludeParams) {
+			return $_SERVER['QUERY_STRING'];
+		}
+		$queryParams = array();
+		parse_str($_SERVER['QUERY_STRING'], $queryParams);		
+		foreach ($excludeParams as $param) {
+			if (isset($queryParams[$param])) {
+				unset($queryParams[$param]);								
+			}
+		}
+		return $this->_implodeQueryParams($queryParams);
 	}
     
     protected function get_simple_construct($page_attr) //этот метод юзается в потомке 404 для вызова конструктора от класса page

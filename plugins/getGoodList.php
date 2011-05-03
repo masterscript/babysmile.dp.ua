@@ -1,24 +1,47 @@
 <?php
 function getGoodList($obj) {
-    	
+
+	$filters = $obj->getCatalogFilters();
+
+	$goodsCount = db::getDB()->selectCell(
+		'SELECT COUNT(i.id) FROM ?_items i
+		LEFT JOIN goods g ON i.id = g.id
+		WHERE (type = ? OR type = ? OR template = ? OR template = ?) AND url LIKE ? AND protected<=?d
+		{AND g.price>=? AND g.price<=?}
+		{AND i.name LIKE ?}
+		{AND g.biz_id IN (?a)}
+		{AND (price_old > price AND price_old > ?)}',
+		'good', 'good_set', 'subcategory', 'clothers_container', $obj->getUrl() . '/%', user::getAccessLevel(),
+		$filters['price']['filtered'] ? $filters['price']['min'] : DBSIMPLE_SKIP, $filters['price']['filtered'] ? $filters['price']['max'] : DBSIMPLE_SKIP,
+		$filters['name'] ? $filters['name'] : DBSIMPLE_SKIP,
+		$filters['vendors'] ? $filters['vendors'] : DBSIMPLE_SKIP,
+		$filters['discount'] ? $filters['discount'] : DBSIMPLE_SKIP
+	);
+	
     if ($obj->issetParam('count') && $obj->issetParam('numerator_name')) {
-        $obj->setNumerator(
-            db::getDB()->selectCell('
-                SELECT count(id) from ?_items as items WHERE (type = ? OR type = ? OR template = ?) AND pid = ? and protected<=?d',
-                'good','good_set','subcategory',$obj->getId(),user::getAccessLevel())
-        );
+        $obj->setNumerator($goodsCount);
     }
-    
-	$items = db::getDB()->select('
-		SELECT
+    	
+	$items = db::getDB()->select(
+		'SELECT
 			type,description,i.id,name,url,title,filename AS img_src,price,
 			availability,IF(price_old>price,price_old,0) price_old
 		FROM items i
 		LEFT JOIN goods g ON i.id = g.id
 		LEFT JOIN top_images ti ON ti.id = i.id 
-		WHERE (type = ? OR type = ? OR template = ? OR template = ?) AND url LIKE ? and protected<=?d
-		ORDER BY type, sort, create_date DESC {limit ?d,?d}',
-		'good', 'good_set', 'subcategory', 'clothers_container', $obj->getUrl() . '/%', user::getAccessLevel(),$obj->getLimitFrom(),$obj->getLimitCount()
+		WHERE (type = ? OR type = ? OR template = ? OR template = ?) AND url LIKE ? AND protected<=?d
+		{AND g.price>=? AND g.price<=?}
+		{AND i.name LIKE ?}
+		{AND g.biz_id IN (?a)}
+		{AND (price_old > price AND price_old > ?)}
+		ORDER BY {?f,} type, sort, create_date DESC {limit ?d,?d}',
+		'good', 'good_set', 'subcategory', 'clothers_container', $obj->getUrl() . '/%', user::getAccessLevel(),
+		$filters['price']['filtered'] ? $filters['price']['min'] : DBSIMPLE_SKIP, $filters['price']['filtered'] ? $filters['price']['max'] : DBSIMPLE_SKIP,
+		$filters['name'] ? $filters['name'] : DBSIMPLE_SKIP,
+		$filters['vendors'] ? $filters['vendors'] : DBSIMPLE_SKIP,
+		$filters['discount'] ? $filters['discount'] : DBSIMPLE_SKIP,
+		$filters['order']['price'] ? 'g.price ' . $filters['order']['price'] : DBSIMPLE_SKIP,
+		$obj->getLimitFrom(),$obj->getLimitCount()
     );
     
     foreach ($items as $item) {
@@ -32,7 +55,8 @@ function getGoodList($obj) {
 		$objectItems[] = new page($item);
 	}
 		
-	return $objectItems;
+	
+	return array('data' => $objectItems, 'count' => $goodsCount);
 	
 }
 ?>
