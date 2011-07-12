@@ -1,0 +1,1 @@
+ALTER TABLE `items` ADD COLUMN `comments_count` INTEGER UNSIGNED NOT NULL DEFAULT 0 AFTER `protected`;

@@ -1,0 +1,140 @@
+<!-- Cart START -->
+<div id="cart">
+	<h1>КОРЗИНА</h1>
+
+	<div id="successOrder" class="modal">
+		На Ваш e-mail, указанный при регистрации, отправлен счет.<br />
+		Напоминаем, что перед оплатой Вам необходимо предварительно согласовать с нашим менеджером все условия, а именно: 
+		<ul>
+		 <li>наличие товара и его характеристики;</li>
+		 <li>сроки доставки;</li>
+		 <li>условия оплаты и др.</li>
+		</ul>            
+		Счет предусмотрен для покупателей, проживающих вне черты  г.&nbsp;Днепропетровска.<br />
+		Спасибо, что воспользовались нашими услугами.
+	</div>
+	
+	{if $user->getCart()}
+	<form id="cartForm" action="{$page->getUrl()}" method="post">
+		<div class="content">
+			{foreach from=$user->getCart() key=key item=item}
+				{assign var=good value=$item.good}
+				<div class="block">
+					<div class="col image">
+						<a href="{$good->getUrl()}"><img src="{$good->getImage()}" alt="{$good->getName()|escape}" width="220" height="190" /></a>
+					</div>
+					<div class="col text"><div class="centered">
+						<div class="link"><a href="{$good->getUrl()}" title="{$good->getTitle()}">{$good->getName()}</a></div>
+						<div class="info">{$good->getDescription()}</div>
+						<div class="price">{$good->price|convert_currency}</div>
+					</div></div>
+					<div class="col num"><div class="centered">
+						<a href="#" class="up"></a>
+						<input name="count[{$key}]" type="text" value="{$item.count}" />
+						<a href="#" class="down"></a>
+					</div></div>
+					<div class="col sum_price"><div class="centered">
+						{$item.price_sum|convert_currency}
+					</div></div>
+					<div class="col delete"><div class="centered">
+						<a href="#">удалить</a>
+						<input type="hidden" name="key" value="{$key}" />
+					</div></div>
+				</div>
+			{/foreach}		
+			
+			<div class="cart_bottom">
+				<input name="doRecalc" type="submit" value="Пересчитать" />
+				<input name="doProcess" type="button" value="Оформить заказ" />
+				<span class="sum">Итого:</span>
+				<span class="sep"></span>
+				<span class="price">{$user->getCartSum()|convert_currency}</span>
+			</div>
+		</div>
+	</form>
+	{else}
+		<p id="emptyCart">Корзина пуста</p>
+	{/if}
+</div>
+<!-- Cart END -->
+
+<script type="text/javascript" src="/js/jquery.form.js"></script>
+{if $user->getState()=='login'}
+	{assign var=info value=$page->getUserInfo()}
+	<script type="text/javascript" src="/js/userInfo.js"></script>
+	<script type="text/javascript" src="/js/shopCartUser.js"></script>
+	<form method="post" class="standart modal" id="userInfo" action="?pname=ajaxOrder">
+		<label>Телефон мобильный<input type="text" name="phone" value="{$info.phone}" /></label>
+		<label for="phone_home">Телефон домашний</label><input type="text" name="phone_home" value="{$info.phone_home}" />
+		<label for="region_id">Регион</label>
+		<select name="region_id">
+			{foreach from=$page->sources->getRegions() key=id item=name}
+				<option value="{$id}"{if $info.region_id eq $id} selected="selected"{/if}>{$name}</option>
+			{/foreach}
+		</select>
+		<label for="city_id">Город</label>
+		<select name="city_id">
+			{foreach from=$page->sources->getCities($info.region_id) key=id item=name}
+				<option value="{$id}"{if $info.city_id eq $id} selected="selected"{/if}>{$name}</option>
+			{/foreach}
+		</select>
+		<label for="address">Адрес</label><input type="text" name="address" value="{$info.address}" />
+		<label for="house_number">Номер дома</label><input type="text" name="house_number" value="{$info.house_number}" />
+		<label for="app_number">Номер квартиры</label><input type="text" name="app_number" value="{$info.app_number}" />
+		<label for="floor">Этаж</label><input type="text" name="floor" value="{$info.floor}" />
+		<label for="intercom">Код подъезда</label><input type="text" name="intercom" value="{$info.intercom}" />
+		<label for="delivery">Доставка</label>
+		<select name="delivery">
+			<option value="self"{if $info.delivery eq 'self'} selected="selected"{/if}>самовывоз</option>
+			<option value="carrier"{if $info.delivery eq 'carrier'} selected="selected"{/if}>компания-перевозчик</option>
+			<option value="courier"{if $info.delivery eq 'courier'} selected="selected"{/if}>курьер (только по Днепропетровску)</option>
+		</select>
+		<div id="carrier">
+			<label for="carrier_id">Компания-перевозчик</label>
+			<select name="carrier_id">
+			{foreach from=$page->sources->getCarriers($info.city_id) item=v}
+				<option value="{$v.id}"{if $v.id eq $info.carrier_id} selected="selected"{/if}>{$v.name}</option>
+			{foreachelse}
+				<option value="0">нет данных</option>
+			{/foreach}
+			</select>
+			<label for="carrier_office">офис</label>
+			<select name="carrier_office">
+			{foreach from=$page->sources->getCarrierOffices($info.carrier_id,$info.city_id) item=v}
+				<option value="{$v.id}"{if $v.id eq $info.carrier_office} selected="selected"{/if}>{$v.name}</option>
+			{foreachelse}
+				<option value="0">нет данных</option>
+			{/foreach}
+			</select>
+		</div>
+		<div>
+			<input type="checkbox" name="byDefault" id="byDefault" style="display:inline; width:auto;" />
+			<label style="display:inline;" for="byDefault">использовать эти настройки по умолчанию</label>
+		</div>
+		<label for="note">Примечание</label><textarea name="note"></textarea>
+		<div>
+			{if $info.is_courier}
+				<input type="checkbox" name="sendAccount" id="sendAccount" style="display:none; width:auto;" />
+				<label style="display:none;" for="sendAccount">выслать счет на e-mail</label>
+			{else}
+				<input type="checkbox" name="sendAccount" id="sendAccount" checked="checked" style="display:inline; width:auto;" />
+				<label style="display:inline;" for="sendAccount">выслать счет на e-mail</label>
+			{/if}                    
+		</div>
+		<div>{if $sum gt 300}доставка вашего заказа бесплатна{/if}</div>
+		<input class="submit" type="submit" name="doOrder" value="Подтвердить заказ" />            
+		<input class="submit" type="submit" name="doClearCart" value="Очистить корзину" />
+	</form>
+{else}
+	<p class="form_error" id="message-register">
+		Для оформления заказа рекомендуется <a href="/register">зарегистрироваться</a> или войти на сайт под своим логином. Регистрация займет у Вас всего несколько минут. Пользуясь в дальнейшем своей учетной записью, Вам не нужно будет повторно вводить информацию при следующем оформлении заказа. Также Вы получите возможность участвовать в дисконтной программе нашего интернет-магазина
+	</p>	
+	<script type="text/javascript" src="/js/shopCartGuest.js"></script>
+	<form method="post" class="standart modal" id="userInfo" action="?pname=ajaxOrderNotregister" title="Оформление заказа">
+		<label>Имя<input type="text" name="name" /></label>
+		<label>Телефон мобильный<input type="text" name="phone" /></label>
+		<label>E-mail<input type="text" name="email" /></label>
+		<label>Примечание<textarea name="note"></textarea></label>
+		<div>{if $sum gt 300}доставка вашего заказа бесплатна{/if}</div>
+	</form>
+{/if}

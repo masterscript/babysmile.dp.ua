@@ -3,7 +3,7 @@ $(document).ready(function() {
 	// fill cities
 	$("select[name='region_id']").change(function(){
 		var id = $(this).val() ? $(this).val() : ($(this).children(":selected").val() ? $(this).children(":selected").val() : $(this).children(":first").val());
-		$.getJSON("/ajax/get_cities",{region_id: id}, function(j){
+		$.getJSON("?pname=ajaxGetCities",{region_id: id}, function(j){
 		  var options = '';
 		  for (var i = 0; i < j.length; i++) {
 			options += '<option value="' + j[i].id + '">' + j[i].name + '</option>';
@@ -19,7 +19,7 @@ $(document).ready(function() {
 	// fill carriers
 	$("select[name='city_id']").change(function(){
 		var id = $(this).val() ? $(this).val() : ($(this).children(":selected").val() ? $(this).children(":selected").val() : $(this).children(":first").val());
-		$.getJSON("/ajax/get_carriers",{city_id: id}, function(j){
+		$.getJSON("?pname=ajaxGetCarriers",{city_id: id}, function(j){
 		  var options = '';
 		  for (var i = 0; i < j.length; i++) {
 			options += '<option value="' + j[i].id + '">' + j[i].name + '</option>';
@@ -32,7 +32,7 @@ $(document).ready(function() {
 	// fill carrier office
 	$("select[name='carrier_id']").change(function(){
 		var carrier = $(this).val() ? $(this).val() : ($(this).children(":selected").val() ? $(this).children(":selected").val() : $(this).children(":first").val());
-		$.getJSON("/ajax/get_carrier_offices",{carrier_id: carrier, city_id: $("select[name='city_id']").val()}, function(j){
+		$.getJSON("?pname=ajaxGetCarrierOffices",{carrier_id: carrier, city_id: $("select[name='city_id']").val()}, function(j){
 		  var options = '';
 		  for (var i = 0; i < j.length; i++) {
 			options += '<option value="' + j[i].id + '">' + j[i].name + '</option>';

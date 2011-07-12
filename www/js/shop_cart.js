@@ -1,7 +1,7 @@
 
 // обновление статистики корзины
 function refreshCart () {	
-	$("#header_icons a.cart span").load("/ajax/refresh_cart", {data_type: "count"});	
+	$("#header_icons a.cart span").load("?pname=ajaxCartRefresh", {data_type: "count"});	
 }
 
 // заказ товара
@@ -18,7 +18,7 @@ $(document).ready(function() {
 			hide: 'explode',
 			buttons: {
 				'Добавить': function() {
-					$.post("/ajax/add_to_cart",$(this).serialize(),refreshCart);
+					$.post("?pname=ajaxCartAdd",$(this).serialize(),refreshCart);
 					$(this).dialog("close");
 				},
 				'Отменить': function() {
@@ -37,7 +37,7 @@ $(document).ready(function() {
 	});
 	
 	$('#cart div.delete a').click(function() {
-		$.post('/ajax/delete_from_cart', {key: $(this).next('input').val()},
+		$.post('?pname=ajaxCartDelete', {key: $(this).next('input').val()},
 			$.proxy(function (data) {
 				if (data.result) {
 					$(this).parents('#cart div.block').fadeOut(function() {
@@ -47,7 +47,7 @@ $(document).ready(function() {
 						}						
 					});
 					refreshCart();
-					$('.cart_bottom span.price').load('/ajax/refresh_cart', {data_type: 'price'});
+					$('.cart_bottom span.price').load('?pname=ajaxCartRefresh', {data_type: 'price'});
 				}
 			}, $(this)),
 			'json'
