@@ -1,15 +1,18 @@
-* {outline:none}
+/** {outline:none}*/
 html, body {margin:0; padding:0; width:100%; height:100%}
 body {background-color:#e9d9c7; font-family:"Trebuchet MS", Arial, Helvetica, sans-serif; font-size:15px; color:#231f20; background-image:url(../images/all_bg.jpg); background-repeat:no-repeat; background-position:50% 0}
 img {border:0}
 a {text-decoration:none; border:0; color:#ae793c}
 a:hover {text-decoration:underline; color:#ae793c}
 
-form {display:inline}
+/*form {display:inline}*/
 table {border-collapse:collapse}
 td {padding:0; vertical-align:top}
 ul, li {margin:0; padding:0; list-style:none}
 
+.modal { display:none; }
+form.standart label { display:block; margin-top: 10px; color:#666; }
+form.standart input, form.standart textarea { display:block; width:300px; }
 
 #header {width:932px; margin:0 auto; height:153px; overflow:hidden}
 	#header_logo {float:left; padding:51px 0 0 0}
@@ -19,7 +22,13 @@ ul, li {margin:0; padding:0; list-style:none}
 	#header_slogan_inner {float:right; padding:50px 26px 0 0}
 	
 	#header_icons {float:right; padding:36px 81px 0 0; overflow:hidden}
-		#header_icons a {float:left}
+		#header_icons a {float:left; text-decoration:none}
+		#header_icons a.cart { position: relative; }
+		#header_icons a.cart span { position:absolute; left:15px; top:5px; font-size:90%; font-weight:bold; }
+		#formEnter div.switchable { font-size:70%; }
+		#formEnter div.switchable.enter { display:none; }
+		#formEnter label.pass_again { display:none; }
+		button.switchable.register { display:none; }
 
 #wrapper {width:786px; margin:0 auto; padding:0 73px}
 
@@ -126,7 +135,7 @@ ul, li {margin:0; padding:0; list-style:none}
 			#cart div.block div.num a.up, #cart div.block div.num a.down {background-image:url(../images/cart_arrows_shape.gif); width:19px; height:19px; display:block; margin:10px auto}
 			#cart div.block div.num a.down {background-position:0 -19px}
 		#cart div.block div.sum_price {width:143px; font-size:25px; color:#ae793c}
-		#cart div.block div.delete {width:60px}
+		#cart div.block div.delete {width:60px;}
 	#cart div.cart_bottom {text-align:right; color:#624199; font-size:20px; padding:15px 80px 0 0}
 		#cart div.cart_bottom a.book {display:inline-block; vertical-align:middle; background-color:#c0b5d8; color:#231f20; font-size:15px; padding:4px 28px; margin:0 26px 0 0}
 		#cart div.cart_bottom span {display:inline-block; vertical-align:middle}
@@ -190,7 +199,8 @@ ul, li {margin:0; padding:0; list-style:none}
 			#item div.item_top div.text div.info {color:#808184; font-size:13px; padding:6px 0 5px 0}
 			#item div.item_top div.text span {color:#ae793c}
 			#item div.item_top div.text span.big {font-size:25px}
-			#item div.item_top div.text span.violet {color:#624199}
+			#item div.item_top div.text span.old_price {text-decoration: line-through; color:grey; font-weight:bold;}
+			#item div.item_top div.text a.violet {color:#624199}
 			#item div.item_top div.text div.buy {padding:5px 0 0 0}
 	
 	#item div.item_species {}

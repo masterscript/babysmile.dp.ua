@@ -107,7 +107,7 @@
 	            		</a>
 	            	</div>
 	            	{/if}
-	                <div class="link"><a href="#">{$item->name|escape}</a></div>
+	                <div class="link"><a href="{$item->url}">{$item->name|escape}</a></div>
 	                <div class="info">{$item->description|escape|nl2br}</div>
 	                <div class="price">{$item->price|convert_currency}</div>
 	            </div>

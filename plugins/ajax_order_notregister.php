@@ -6,19 +6,13 @@ require_once 'Mail/mime.php';
 
 function ajax_order_notregister() {
     
-	ini_set("display_errors","Off");
+	//ini_set("display_errors","Off");
 	
     @session_start();
     
-	if (isset($_POST['doClearCart'])) {
-    	unset($_SESSION['cart']);
-    	echo '{is_errors:0, clear:1}';
-    	return ;
-    }
-
     try {
     	
-	    if (isset($_POST['doOrder']) && isset($_SESSION['cart'])) {
+	    if ($_POST && isset($_SESSION['cart'])) {
 	    	
 	    	$phone = $_POST['phone'];
 	    	$email = $_POST['email'];

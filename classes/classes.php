@@ -1,6 +1,8 @@
 <?php
 require_once "../libs/DbSimple/Generic.php";
 
+class Engine_Core_Exception extends Exception  { }
+
 class config
 {
 	static private $values=null;
@@ -81,11 +83,65 @@ class config
 		return self::getConfigValue('TABLE_TYPE_MATCHING',$name);	
 	}
 	
+	function getProjectName()
+	{
+		return self::getConfigValue('PROJECT','name');
+	}
+	
 	function getTemplatesValue($name)
 	{
 		return self::getConfigValue('DEFAULT_TEMPLATES',$name);
 	}
-		
+	
+	function getDefaultLang()
+	{
+		return trim(self::getConfigValue('LANGUAGES','default'));
+	}
+	
+	function getLangs($full_info=false)
+	{
+		//если не указан default язык, то система моноязычная и вызов этого метода не имеет смысла
+		if (self::getDefaultLang()=='') throw new Exception("Can't call languages list for a monolanguage system (need set default language in the main config file)");
+		$langs=self::getConfigValue('LANGUAGES');
+		unset ($langs['default']); //ну и других записей подобного рода пока добавлять в LANGUAGES не будем...
+		if (!$full_info) return array_keys($langs);
+		else return $langs;
+	}
+	
+	function getLangLocale($lang)
+	{
+		$langs=self::getLangs('full');
+		if (isset($langs[$lang]['locale'])) return $langs[$lang]['locale'];
+		else throw new Exception('Undefined language "'.$lang.'" or not defined locale parameter for this language');
+	}
+	
+	function getDefaultLangByDomain($domain)
+	{
+		if (@substr($domain,0,4)=='www.') $domain=substr($domain,4);
+		$langs=self::getLangs('full');
+		foreach ($langs as $lang_name=>$lang)
+		if (isset($lang['domain']) and $lang['domain']==$domain) return $lang_name;
+		return self::getDefaultLang();
+	}
+	
+	function getLangDomain($lang)
+	{
+		$langs=self::getLangs('full');
+		if (isset($langs[$lang]))
+			if (isset($langs[$lang]['domain'])) return 'http://'.$langs[$lang]['domain'];
+			else return '/';
+		else throw new Exception('Undefined language "'.$lang.'".');
+	}
+	
+	function getAjaxAllowTemplates()
+	{
+		return preg_split('" *, *"',self::getConfigValue('AJAX_ALLOW_TEMPLATES','allow'));
+	}
+	
+	function getAjaxAllowPlugins()
+	{
+		return preg_split('" *, *"',self::getConfigValue('AJAX_ALLOW_PLUGINS','allow'));
+	}
 }
 
 class current_user
@@ -96,13 +152,25 @@ class current_user
 	private $access_level;
 	private $login_state;
 	private $ip;
-	function __construct($login,$pass)
+	private $cart, $cart_sum = 0, $cart_count = 0;	
+	
+	function __construct($login,$pass,$initType)
 	{
 		$this->ip=$_SERVER['REMOTE_ADDR'];
-		if ($login!='')
+		if ($initType=='form')
 		{
-			$user_attr=db::getDB()->selectRow('SELECT users.id,group_name,name,access_level,email FROM ?_items as items, ?_users as users, ?_groups as groups WHERE items.id=users.id and users.group_id=groups.id and url=? and pass=?',
-												config::getConfigValue('URLS','userfolder').$login, md5($pass));
+			if ($login!='')
+			{
+				$user_attr=db::getDB()->selectRow('SELECT users.id,group_name,name,access_level,email FROM ?_items as items, ?_users as users, ?_groups as groups WHERE items.id=users.id and users.group_id=groups.id and url=? and pass=?',
+													config::getConfigValue('URLS','userfolder').$login, md5($pass));
+			}
+		}
+		elseif ($initType=='id')
+		{
+			$user_attr=db::getDB()->selectRow('SELECT users.id,group_name,name,access_level,email FROM ?_items as items, ?_users as users, ?_groups as groups WHERE items.id=users.id and users.group_id=groups.id and users.id=?d', $login);
+		}
+		if (isset($user_attr))
+		{
 			if ($user_attr)
 			{
 				$this->group_name=$user_attr['group_name'];
@@ -111,7 +179,7 @@ class current_user
 				$this->access_level=$user_attr['access_level'];
 				$this->email=$user_attr['email'];
 				$this->id=$user_attr['id'];
-				db::getDB()->query('INSERT into ?_userlog(user_id,action_type,ip,viewed_url) values(?,?,?,?)',$this->id,'login',$this->ip,$_SERVER['REQUEST_URI']);//пришем вход в логи
+				//db::getDB()->query('INSERT into ?_userlog(user_id,action_type,ip,viewed_url) values(?,?,?,?)',$this->id,'login',$this->ip,$_SERVER['REQUEST_URI']);//пришем вход в логи
 				db::getDB()->query('UPDATE ?_users SET lastvisit=NOW() WHERE id=?',$this->id);
 			}
 			else 
@@ -132,6 +200,74 @@ class current_user
 			$this->access_level=0;
 			$this->email=null;
 			$this->id=null;
+		}
+		$this->calcCart();
+	}
+	
+	public function calcCart()
+	{
+		@session_start();
+		$this->cart = array();
+		if (isset($_SESSION['cart'])) {
+			foreach ($_SESSION['cart'] as $key=>$cart) {
+				$props = db::getDB()->selectRow('
+					SELECT
+					  i.description, i.id, i.name, i.url, i.title, filename AS img_src,
+					  (IFNULL(SUM(gc.price),0) + IFNULL(g.price, 0)) price, g.availability,
+					  g.delivery_period, g.is_build, i_biz.name AS biz_name,
+					  i_biz.url AS biz_url					  
+					FROM
+					  `items` i
+					  JOIN goods g ON i.id = g.id
+					  LEFT JOIN items c ON c.pid = i.id
+					  LEFT JOIN goods gc ON c.id = gc.id
+					  LEFT JOIN biz b ON g.biz_id = b.id
+					  LEFT JOIN items i_biz ON g.biz_id = i_biz.id
+					  LEFT JOIN top_images ti ON ti.id = i.id
+					WHERE
+					  i.id = ?d
+					GROUP BY
+					  i.id',$cart['good_id']);
+				$this->cart[$key]['good'] = new page($props);
+				$this->cart[$key]['count'] = $cart['count'];
+				$this->cart_count += $this->cart[$key]['count'];
+				$this->cart[$key]['price_sum'] = $this->cart[$key]['good']['price']*$this->cart[$key]['count'];
+				$this->cart_sum += $this->cart[$key]['price_sum'];
+			}
+			require_once 'smarty/libs/plugins/modifier.convert_currency.php';
+			$this->cart_sum = smarty_modifier_convert_currency($this->cart_sum);			
+		}
+	}
+	
+	public function updateCartCount($key, $value)
+	{
+		if (isset($this->cart[$key])) {
+			@session_start();
+			$oldCount = $this->cart[$key]['count'];
+			$this->cart[$key]['count'] = $_SESSION['cart'][$key]['count'] = $value;
+			$this->cart_count += ($value - $oldCount);
+			$goodPrice = $this->cart[$key]['good']['price'];
+			$this->cart[$key]['price_sum'] = $value * $goodPrice;
+			$this->cart_sum += ($value*$goodPrice - $oldCount*$goodPrice);
+		}		
+	}
+	
+	public function deleteFromCart($key)
+	{
+		if (isset($this->cart[$key])) {
+			@session_start();
+			$count = $this->cart[$key]['count'];
+			$sum = $this->cart[$key]['price_sum'];
+			unset($this->cart[$key]);
+			unset($_SESSION['cart'][$key]);
+			$this->cart_count -= $count;
+			$this->cart_sum -= $sum;
+			if (!count($_SESSION['cart'])) {
+				unset($_SESSION['cart']);
+			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
@@ -163,6 +299,21 @@ class current_user
 	{
 		return $this->ip;
 	}
+	
+	public function getCart()
+	{		
+		return $this->cart;
+	}
+	
+	public function getCartCount()
+	{
+		return $this->cart_count;
+	}
+	
+	public function getCartSum()
+	{				
+		return $this->cart_sum;
+	}
 }
 
 //статический класс для хранения текущего юзера (заодно и автоматом инициализирует его как гостя в случае чего...)
@@ -173,7 +324,7 @@ class user
 	function init($login=null,$pass=null)
 	{
 		if (self::$current!=null) throw new Exception('Ну нельзя инитить юзера, если он уже проинициализирован. Видимо где-то баг.');
-		self::$current=new current_user($login,$pass);
+		self::$current=new current_user($login,$pass,'form');
 		return self::$current;
 	}
 	function retrieve($user)
@@ -181,8 +332,14 @@ class user
 		if (self::$current!=null) throw new Exception('Какая-то фигня... нельзя во время работы сценария перезаписать уже инициализированного юзера...');
 		self::$current=$user;
 		//логи - можно еще сравнить REMOTE_ADDR с тем ip, что у нас в сессии хранится... будет прикольно если он вдруг поменяется.
-		//db::getDB()->query('INSERT into ?_userlog(user_id,action_type,ip,viewed_url) values(?,?,?,?)',$user->getId(),'view',$_SERVER['REMOTE_ADDR'],$_SERVER['REQUEST_URI']);//пришем вход в логи
-		//db::getDB()->query('UPDATE ?_users SET lastvisit=NOW() WHERE id=?',$user->getId());
+		db::getDB()->query('INSERT into ?_userlog(user_id,action_type,ip,viewed_url) values(?,?,?,?)',$user->getId(),'view',$_SERVER['REMOTE_ADDR'],$_SERVER['REQUEST_URI']);//пришем вход в логи
+		db::getDB()->query('UPDATE ?_users SET lastvisit=NOW() WHERE id=?',$user->getId());
+	}
+	function initById($id)
+	{
+		if (self::$current!=null) throw new Exception('Какая-то фигня... юзер уже есть, а идет попытка перегрузить его по id...');
+		self::$current=new current_user($id,'','id');
+		return self::$current;
 	}
 	function getCurrentUser()
 	{
@@ -321,7 +478,7 @@ class db //тут коннектимся к БД и храним наш объе
 	}
 }
 
-class page
+class page implements ArrayAccess
 {
 	private $url;				//адрес
 	private $id;				//id
@@ -359,6 +516,26 @@ class page
 		if (isset($page_attr['parents'])) $this->parents=$page_attr['parents'];
 		// вообще-то эту хрень лучше будет оформить как я погляжу через _get и все принимаемые свойства держать в page_attr и из него и отдавать
 		// не, не всю... какие-то свойства должны стандартными методами доставаться, а то поменл имя поля и можно все вызовы в шаблонах переписывать...
+	}
+	
+	public function offsetGet($name)
+	{
+		return $this->page_attr[$name];
+	}
+	
+	public function offsetExists($name)
+	{
+		return array_key_exists($name, $this->page_attr);
+	}
+	
+	public function offsetSet($name, $value)
+	{
+		throw new Exception(__METHOD__ . ' not implemented');
+	}
+	
+	public function offsetUnset($name)
+	{
+		throw new Exception(__METHOD__ . ' not implemented');
 	}
 	
 	function getId()
@@ -506,6 +683,28 @@ class parent_page extends page
 	}
 }
 
+class page_ext extends parent_page //еще более развернутая версия page, умеющая оперировать доп. свойствами (помимо стандартных)
+// achtung!!! походу неплохо было бы всю эту кашу привести впорядок и понаследовать current_page уже от кого-то из этих расширенных а не от page, покастрировав в ней дублирующиеся свойства и методы
+{
+	private $properties=array();
+	private $std_prop=array('id','url','name','title','description','create_date','image_filename','comments_count','parents');
+	function __construct($page_attr)
+	{
+		parent::__construct($page_attr);
+		foreach ($page_attr as $pname=>$pval)
+		{
+			if (!in_array($pname,$this->std_prop)) $this->properties[$pname]=$pval;
+		}
+	}
+	
+	function __get($name)
+	{
+		if (array_key_exists($name,$this->properties)) return $this->properties[$name];
+		else throw new Exception('Get not exist additional page parameter '.$name);
+	}
+	
+}
+
 class menu_element extends page
 {
 	private $is_parent;
@@ -530,6 +729,7 @@ class menu_element extends page
 
 class current_page extends page 
 {
+	private $lang;
 	public $sources;
 	private $access;		//необходимый уровень доступа (целое число)
 	private $type;
@@ -541,6 +741,7 @@ class current_page extends page
 	private $numerator_current; //текущая страница нумератора с именем 'блаблабла' (и это тоже)
 	private $numerator_anchor; //якорь, добавляемый к ссылкам нумератора
 	private $cache;
+	private $pluginResults=array();
 	//private $left_menu_start=null; //для формирования "продолжения" меню в вертикальной боковой колонке
 									//необходимо знать на каком из родителей текущей страницы
 									//мы столкнулись с ситуацией, когда среди его детей нет элементов
@@ -550,27 +751,62 @@ class current_page extends page
 	
 	function __construct($params)
 	{
-		$this->sources = Sources::getInstance($this);						
-		
-		if (substr($params,0,7)=='/_mark/')
+		$this->sources = Sources::getInstance($this);								
+		if (config::getDefaultLang()=='') $this->lang='';// моноязычная версия
+		else
 		{
-			$forward_url=db::getDB()->selectCell('SELECT items.url from ?_items as items, ?_marks as marks where marks.item_id=items.id and mark=?',substr($params,7));
-			if ($forward_url) header('Location:'.$forward_url);
-			else throw new Exception('Page not found (invalid mark:'.substr($params,7).')',404);
+			if ($params=='') $this->lang=config::getDefaultLangByDomain($_SERVER['HTTP_HOST']);
+			else
+			{
+				$this->lang=substr($params,1,strcspn($params,'/',1));
+				if (!in_array($this->lang,config::getLangs())) $this->lang=config::getDefaultLangByDomain($_SERVER['HTTP_HOST']);		
+			}
+			//--------------------- интернационализация статики
+			putenv("LANGUAGE=".config::getLangLocale($this->lang));
+			setlocale (LC_ALL,config::getLangLocale($this->lang));
+			bind_textdomain_codeset(config::getProjectName(), "UTF8");
+			bindtextdomain (config::getProjectName(), config::getConfigValue('FOLDERS','locale'));
+			textdomain (config::getProjectName());
+			//die ('"'.getenv('LANGUAGE').'" '.config::getProjectName().' '.config::getConfigValue('FOLDERS','locale').' ->'.setlocale(LC_ALL,config::getLangLocale($this->lang)));
+			//---------------------- конец интернационализации статики
 		}
-		$page_attr=db::getDB()->selectRow('SELECT ?_items.id,url,name,title,description,create_date,protected,type,template,filename as img_src from ?_items left join ?_top_images on ?_top_images.id=?_items.id where url=?',$params);
+		
+		if (substr($params,0,3)=='/_/' or substr($params,0,7)=='/_mark/') //теперь в таблице для mark в мультиязычной версии нужно будет указывать несколько вариантов: например для /_mark/news  в таблице будет ru:news, en:news
+		{
+			if (substr($params,0,3)=='/_/') $marklength=3; else $marklength=7;
+			if (config::getDefaultLang()!='') $mark_prefix=$this->lang.':'; else $mark_prefix='';
+			$get=$_GET;
+			unset($get['params']); //лень думать о том как оно сюда попадает и как его вообще убрать нафик
+			$uri_parts = array();
+  			foreach ($get as $k=>$v) $uri_parts[] = $k.'='.$v;
+			$forward_url=db::getDB()->selectCell('SELECT items.url from ?_items as items, ?_marks as marks where marks.item_id=items.id and mark=?',$mark_prefix.substr($params,$marklength));
+			if ($forward_url) {header('Location:/'.$forward_url.'?'.implode('&',$uri_parts)); die();}//нехорошо, нужно снабдить такой заголовок вменяемым контентом на тему состояния перенаправления, вдруг браузер не схавает location...
+			else throw new Exception('Page not found (invalid mark:'.substr($params,$marklength).')',404);//а в мультиязычной версии может еще и марка с нужным префиксом не оказаться...
+		}
+		//!!! такие ajax - запросы на данный момент моноязычны и должны идти в базе БЕЗ ведущего слэша в мультиязычной системе и С НИМ в моноязычной... вот такой косяк пока...
+		if (substr($params,0,7)=='/_ajax/') //проверка того что ajax вызван именно как ajax (предполагается, что ajax запросы идут с урлов начинающихся с _ajax хотя если не соблюдать это соглашение - то просто не будет соответствующей проверки)
+		{
+			if(!(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')) throw new Exception('Incorrect call format for:'.$params.'. This block may call only from ajax requests.',404);
+		}
+		
+		if ($params=='') $params=config::getDefaultLang(); //для мультизычного проекта этого можно и не делать... но и лишний if можно не писать...
+		elseif (config::getDefaultLang()!='') $params=substr($params,1); //удаляем ведущий слэш в мультиязычной версии в некорневой странице (там его нет...)
+		
+		$page_attr=db::getDB()->selectRow('SELECT ?_items.id,url,name,title,description,create_date,protected,type,template,comments_count,filename as image_filename from ?_items left join ?_top_images on ?_top_images.id=?_items.id where url=?',$params);
 		//вернет пустой массив если строка не найдена
+		
 		if (count($page_attr)==0) throw new Exception('Page not found: '.$params,404);
 
 		$this->access=$page_attr['protected'];
 		//если уровень доступа текущего пользователя ниже требуемого для просмотра страницы -> forbidden
 
-        if ($this->access > user::getAccessLevel())    throw new Exception($this->access.':'.user::getAccessLevel().' Forbidden',403);
+		if ($this->access > user::getAccessLevel())	throw new Exception($this->access.':'.user::getAccessLevel().' Forbidden',403);
 
 		//остальные атрибуты страницы
 		parent::__construct($page_attr);
 		$this->type=$page_attr['type'];	
 		
+			
 		//получаем дополнительные параметры страницы из связных с items таблиц
 		if (config::getTTMValue($this->type)!=null) $this->additional_attr=db::getDB()->selectRow('SELECT * from ?_'.config::getTTMValue($this->type).' as add_tab where add_tab.id=?d',$this->getId());//ну что поделать если все плэйсхолдеры обрамляются кавычками...
 		
@@ -621,6 +857,12 @@ class current_page extends page
         }
     }
 	
+	function getLang()
+	{
+		//if ($this->lang=='adm') return 'rus';
+		return $this->lang;
+	}
+	
 	function getTemplate()
 	{
 		return $this->template;
@@ -643,6 +885,11 @@ class current_page extends page
 		
 	}
 	
+	function getPluginResult($plugin_name)
+	{
+		if (array_key_exists($plugin_name, $this->pluginResults)) return $this->pluginResults[$plugin_name];
+		else throw new Exception('Plugin '.$plugin_name.' is not run in current config file.');
+	}
 	
 	function getAccess()//а нужна ли она будет?...
 	{
@@ -827,6 +1074,10 @@ class current_page extends page
 			if (!isset($this->cache[$cache_id]))
 				$this->cache[$cache_id]=call_user_func($name,$this);
 			return $this->cache[$cache_id];
+			//$a=call_user_func($name,$this);
+			//echo '<br>result of call <b>'.$name.'</b>:<br>';
+			//var_dump ($a); echo "<br><br>";
+			//return $a;
 		}
 	}
 	
@@ -876,10 +1127,17 @@ class current_page extends page
 		else throw new Exception('Undefined config section '.$section.' in config file '.$this->template );
 	}
 	
-	function issetConfigValue($section,$name)
+	function issetConfigValue($section,$name=null)
 	{
 		if ($this->config==null) $this->config=config::getConfigFile('pages/'.$this->template.'.conf');
-		return isset($this->config[$section][$name]);
+		if ($name!=null) return isset($this->config[$section][$name]);
+		else return isset($this->config[$section]);
+	}
+	
+	function getLangDomain($lang=null) // почти проксик к статике в config для смарти
+	{
+		if ($lang==null) $lang=$this->getLang();
+		return config::getLangDomain($lang);
 	}
 
 	//как бы не совсем понятно теперь, нужен ли вообще этот метод... т.е. стоит ли прогонять все модули складируя результаты
@@ -894,7 +1152,8 @@ class current_page extends page
 		{
 			//$name=$plugin['file'];
 			//array_shift($plugin);
-			$this->$plugin();//а вот тут надо как-то будет синхронизироваться с вызовом в обычных шаблонах, т.к. там параметры через запятую перечисляются, а тут ассоциативный массив параметров который запихнется в 0-й элемент
+			$this->pluginResults[$plugin]=$this->$plugin();//а вот тут надо как-то будет синхронизироваться с вызовом в обычных шаблонах, т.к. там параметры через запятую перечисляются, а тут ассоциативный массив параметров который запихнется в 0-й элемент
+			//а результаты запишем... хотя лучше их хранить не по имени плагина, а по имени ключа в конфиге (оставим на потом)
 		}
 	}
 	
@@ -906,10 +1165,68 @@ class current_page extends page
 		$smarty->compile_dir  = '../templates_c';
 		$smarty->config_dir   = '../smarty/vip/config';
 		$smarty->debug = false;
-		$smarty->assign('page',$this);
+		$page_extender_file=config::getConfigValue('FOLDERS','page_extenders').'/'.$this->getTemplate().'.php';
+		// эта хрень подключает расширяющий current_page класс, который называется по имени шаблона (или типа если его нет) текущей страницы, если такой файл есть (файл называется также).
+		// класс должен экстендиться от абстрактного page_proxy
+		if (file_exists($page_extender_file))
+		{
+			require_once($page_extender_file);
+			$class_name = $this->getTemplate();
+			$smarty->assign('page',new $class_name($this));
+		}// все остальные страницы расширяются классом default_extender, если такой файл есть в extenders
+		elseif (file_exists(config::getConfigValue('FOLDERS','page_extenders').'/default.php'))
+		{
+			require_once(config::getConfigValue('FOLDERS','page_extenders').'/default.php');
+			$smarty->assign('page',new default_extender($this));
+		}
+		else $smarty->assign('page',$this);
 		$smarty->assign('parents',$this->getParents());//для отметки активных разделов меню
 		$smarty->assign('user',user::getCurrentUser());
-		$smarty->display($this->getConfigValue('SETTINGS','html_template'));
+		//$smarty->assign('main_config',new main_config());// надоело коряво статический объект из смарти вызывать...
+		if (config::getDefaultLang()!='') $smarty->assign('langs',config::getLangs());
+		// --------------- обработка ajax вызовов в среде текущей страницы
+		if((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')) 
+		{
+			if (isset($_GET['pname'])) //вызов непосредственно плагина по имени (предполагается что плагин будет чето "эхать" потому как другого вывода никакого (если не указан какой-нибудь ajax-вызов темплейта не будет))
+			{
+				$plugname=$_GET['pname'];
+				if (in_array($plugname,config::getAjaxAllowPlugins()))
+					$this->$plugname();
+				else die ('Not allowed plugin for ajax call.'); // пока вот так.
+			}
+						
+			if (isset($_GET['tname'])) //вызов непосредственно темплейта по имени (таким макаром пока нельзя передать для него доп.параметры)
+			{
+				$tname=$_GET['tname'];
+				if (in_array($tname,config::getAjaxAllowTemplates())) 
+					$smarty->display($tname);
+				else die ('Not allowed template for ajax call.'); // пока вот так.
+			}
+			elseif (isset($_GET['section'])) //вызов секции или конкретного модуля
+			{
+				$section=$_GET['section'];
+				if (!isset($_GET['module'])) //вся секция
+				{
+					if (!$this->issetConfigValue($section)) throw new Exception('Undefined section name "'.$section.'" in ajax call.');
+					foreach ($this->getConfigValue($section) as $module)
+					{
+						// ---- и тута пожалуй стоит системный шаблон какой-нить с тупым форичем вызвать дабы не складывать результаты работы модулей в буфер
+					}
+				}
+				else // модуль
+				{
+					$module=$_GET['module'];
+					if (!$this->issetConfigValue($section,$module)) throw new Exception('Undefined module name "'.$module.'" in section "'.$section.'" in ajax call.');
+					$config_row=$this->getConfigValue($section,$module);
+					$smarty->display($config_row['file']);
+				}
+			}
+			//else throw new Exception('Undefined type of ajax page call.');// чета я не понял, а как тогда старый метод будет работать?...
+			else if (!isset($_GET['pname'])) throw new Exception('Undefined type of ajax page call.'); // if (!isset($_GET['pname'])) гы-гы-гы.... :)
+			//else $smarty->display($this->getConfigValue('SETTINGS','html_template')); //так было раньше, хз почему...
+		} 
+		//---------------- генерация обычной страницы
+		else $smarty->display($this->getConfigValue('SETTINGS','html_template'));
 	}
 	
 	/**
@@ -935,6 +1252,10 @@ class current_page extends page
 		
 	}
 	
+	public function getNearestParent()
+	{
+		return array_pop($this->getParents());
+	}
 }
 
 class Insertion extends current_page {

@@ -6,12 +6,12 @@
 	<meta name="keywords" content="интернет магазин детских колясок, коляски для новорожденных, детские прогулочные коляски, купить коляску, купить детскую коляску, продажа детских колясок, игрушки для детей" />
 	<meta name="description" content="интернет магазин детских колясок, коляски для новорожденных, детские прогулочные коляски, купить коляску, купить детскую коляску, продажа детских колясок, игрушки для детей" />
     <link href="/css/main.css" rel="stylesheet" type="text/css" media="all" />
-    <link rel="stylesheet" type="text/css" href="/js/jquery.ui/css/start/jquery-ui-1.8.1.custom.css" />
+    <link rel="stylesheet" type="text/css" href="/js/jquery.ui/css/custom-theme/jquery-ui-1.8.12.custom.css" />
 	<link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <title>{$page->getTitle()} :: Babysmile</title>
     
     <script type="text/javascript" src="/js/jquery.js"></script>
-	<script type="text/javascript" src="/js/jquery.ui/jquery-ui-1.8.1.custom.min.js"></script>
+	<script type="text/javascript" src="/js/jquery.ui/jquery-ui-1.8.12.custom.min.js"></script>
 	
 	<script type="text/javascript" src="/js/shop_cart.js"></script>
 	<script type="text/javascript" src="/js/common.js"></script>
@@ -46,7 +46,7 @@
 <!-- Header START -->
 <div id="header">
 	<!-- Header logo START -->
-    <div id="header_logo"><a href="#"><img src="/images/header_logo.png" alt="Baby Smile" width="211" height="69" /></a></div>
+    <div id="header_logo"><a href="/"><img src="/images/header_logo.png" alt="Baby Smile" width="211" height="69" /></a></div>
     <!-- Header logo END -->
 	{foreach from=$page->getConfigValue('HEADER') item=template_info}
 		{include file=$template_info.file params=$template_info}

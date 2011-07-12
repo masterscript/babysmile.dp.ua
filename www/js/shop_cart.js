@@ -1,21 +1,13 @@
-// Shop Cart Script
 
 // обновление статистики корзины
-function refreshCart () {
-	
-	$("#cart-count").load("/ajax/refresh_cart",{data_type: "count"});
-	$("#cart-price").load("/ajax/refresh_cart",{data_type: "price"});
-	
+function refreshCart () {	
+	$("#header_icons a.cart span").load("/ajax/refresh_cart", {data_type: "count"});	
 }
 
 // заказ товара
-$(document).ready ( function() {	
-	
-	refreshCart();		
-	
-	//$("form.modal input.spinner").spinner({max: 999, min: 1});
-	
-	$(".button-buy").each( function () {
+$(document).ready(function() {		
+		
+	$(".button-buy").each(function () {
 		var form = $(this).parent().find("form");
 		$(form).dialog({
 			modal: true,
@@ -34,27 +26,44 @@ $(document).ready ( function() {
 				}
 			}
 		});
-		$(this).bind('click',function(){$(form).dialog('open')});
+		$(this).bind('click', function() {
+			$(form).dialog('open');
+			return false;
+		});
+	});		
+	
+	$('.cart_bottom input[name="doProcess"]').click(function(){
+		$('form#userInfo').dialog('open');
 	});
 	
-	$(".deleteFromCart").click( function() {
-		var parentTr = $(this).parent("td").parent("tr");
-		var good_id = $(parentTr).find("input[type='hidden']").attr("value");
-		$.post("/ajax/delete_from_cart",{good_id: good_id},
-			   	function () {
-					$(parentTr).fadeOut(function() {
-						if ($(parentTr).parent("tbody").find("tr").length==2) {
-							$("#table-cart").remove();
-							$("form[name='fmProcessOrder']").remove();
-							$("#message-register").remove();
-							$("#sum_cart").remove();
-							$("#empty_cart_text").text('Корзина пуста');
-						}
+	$('#cart div.delete a').click(function() {
+		$.post('/ajax/delete_from_cart', {key: $(this).next('input').val()},
+			$.proxy(function (data) {
+				if (data.result) {
+					$(this).parents('#cart div.block').fadeOut(function() {
 						$(this).remove();
+						if (!$('#cart div.block').length) {
+							$('#cart').html('<p id="emptyCart">Корзина пуста</p>');
+						}						
 					});
 					refreshCart();
-						$("#sum_cart span").load("/ajax/up_sum_cart");
-				});		
+					$('.cart_bottom span.price').load('/ajax/refresh_cart', {data_type: 'price'});
+				}
+			}, $(this)),
+			'json'
+		);
+		return false;
+	});
+	
+	$('#cart .num .up').click(function() {
+		var current = Number($(this).next().val());
+		$(this).next().val(current < 999 ? current+1 : current);
+		return false;
+	});	
+	$('#cart .num .down').click(function() {
+		var current = Number($(this).prev().val());
+		$(this).prev().val(current > 1 ? current-1 : current);
+		return false;
 	});
 	
 });
