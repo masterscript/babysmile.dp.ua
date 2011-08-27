@@ -1,0 +1,14 @@
+AddDefaultCharset UTF-8
+
+RewriteEngine on
+
+# handle virtual files
+RewriteCond %{REQUEST_FILENAME} !-f
+# handle virtual pages and not existing files
+RewriteRule	^[a-zA-Z0-9_/\.-]*$	handler.php [L]
+
+# disable view files
+<FilesMatch "\.(inc|conf|ini)$">
+Order		Allow,Deny
+Deny from	all
+</FilesMatch>

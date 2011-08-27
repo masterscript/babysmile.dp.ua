@@ -1,0 +1,97 @@
+.tree
+{
+	/*overflow:auto;
+	height:300px;
+	width:250px;*/
+	padding:15px;
+	border:1px solid #c3daf9;
+	font: normal 11px arial, tahoma, helvetica, sans-serif;
+}
+.tree a
+{
+	color:#000;
+	text-decoration:none;
+}
+.tree li, .tree ul
+{
+	list-style: none;
+	background-color:#ffffff;
+}
+.tree li
+{
+	padding:0px 0px 0px 32px;
+	line-height:15px;
+	margin: 0;
+	cursor:pointer;
+	white-space: nowrap;
+}
+.tree li span {
+	white-space:nowrap;
+}
+.tree ul
+{
+	margin:0 0 0 -13px;
+	padding:0;
+}
+.tree li.leaf
+{
+	background: url(images2/leaf.gif) no-repeat -2px 0 #ffffff;
+}
+.tree li.leaf-last
+{
+	background: url(images2/leaf-last.gif) no-repeat -2px 0 #ffffff;
+}
+
+.tree .folder-close
+{
+	background: url(images2/expandable.gif) no-repeat -2px 0 #ffffff;
+}
+.tree .folder-close-last
+{
+	background: url(images2/expandable-last.gif) no-repeat -2px 0 #ffffff;
+}
+.tree .folder-open
+{
+	background: url(images2/collapsable.gif) no-repeat -2px 0 #ffffff;
+}
+.tree .folder-open-last
+{
+	background: url(images2/collapsable-last.gif) no-repeat -2px 0 #ffffff;
+}
+.tree .root{
+	background: url(images2/root.gif) no-repeat 16px 2px #ffffff;
+}
+.tree .toggler
+{
+	float:left;
+	margin-left:-34px;
+	height:16px;
+	width:32px;
+	background-image:url(images2/spacer.gif);
+	cursor:pointer;
+}
+.tree ul.ajax
+{
+	background: url(images2/spinner.gif) no-repeat 0 0 #ffffff;
+	height: 16px;
+}
+.tree ul.ajax li
+{
+	display:none;
+}
+.tree .text{}
+.tree .active{
+	background-color:#F7BE77;
+	padding:1px 2px;
+	border: 1px dashed #444;
+}
+.tree .active-node {
+	background-color:#CDDDED;
+	font-weight:bold;
+	padding:1px 2px;
+	border: 1px dashed #444;
+}
+.tree .sub-active-node {
+	font-weight:bold;
+	padding:1px 2px;
+}

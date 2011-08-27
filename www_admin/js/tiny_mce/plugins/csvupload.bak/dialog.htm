@@ -1,0 +1,49 @@
+<?php
+header("Content-type: text/html; charset=utf-8");
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>{#csvupload.title}</title>
+	<script type="text/javascript" src="../../../jquery.js"></script>
+	<script type="text/javascript" src="../../../jquery.livequery.js"></script>
+	<script type="text/javascript" src="../../../ajaxfileupload.js"></script>
+	<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+	<script type="text/javascript" src="js/dialog.js"></script>
+	
+	<style type="text/css">		
+		#loading {
+			position:absolute;
+			top:0;
+			right:0;
+			width:32px;
+			height:32px;
+			display:none;
+			background:url(img/loading.gif) no-repeat;
+		}
+	</style>
+	
+</head>
+<body>
+<strong>Выбранный файл:</strong> <div id="debug">Выберите файл для загрузки</div>
+<div id="loading"></div>
+<form name="form" action="" method="POST" enctype="multipart/form-data">
+	<input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+	<input id="upl_file" type="file" size="45" name="upl_file" />
+</form>
+
+<form onsubmit="CsvUploadDialog.insert();return false;" action="#">
+	<input id="img_src" name="img_src" type="hidden" />	
+	<div class="mceActionPanel">
+		<!--<div style="float: left">
+			<input type="button" id="insert" name="insert" value="{#insert}" onclick="ImgContentDialog.insert();" />
+		</div>-->
+		<div style="float: right">
+			<input type="button" id="cancel" name="cancel" value="{#imgcontent.close}" onclick="tinyMCEPopup.close();" />
+		</div>
+	</div>
+</form>
+
+</body>
+</html>
