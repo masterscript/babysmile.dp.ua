@@ -1,0 +1,160 @@
+/* CSS Document */
+
+.tree
+{
+	margin:0;
+	padding:10px;
+	font: normal 11px arial, tahoma, helvetica, sans-serif;
+	background:#f7f4ee;
+}
+.tree li
+{
+	list-style: none;
+	margin:0;
+	padding:0 0 0 34px;
+	line-height: 14px;
+	white-space:nowrap;
+	background:#f7f4ee;
+}
+.tree li span
+{
+	display:inline;
+	clear: left;
+	white-space: nowrap;
+	background:#f7f4ee;
+}
+.tree ul
+{
+	margin:0; 
+	padding:0;
+	background:#f7f4ee;
+}
+.tree .root
+{
+	margin-left:-16px;
+	background:#f7f4ee;
+}
+.tree .line
+{
+	margin:0 0 0 -16px;
+	padding:0;
+	line-height: 2px;
+	height:2px;
+	font-size:2px;
+	background: url(images/line_bg.gif) 0 0 no-repeat transparent;
+	background-color:#f7f4ee;
+}
+.tree .line-last
+{
+	margin:0 0 0 -16px;
+	padding:0;
+	line-height: 3px;
+	height:3px;
+	font-size:3px;
+	background: url(images/spacer.gif) 0 0 no-repeat transparent;
+	background-color:#f7f4ee;
+}
+.tree .line-over
+{
+	margin:0 0 0 -16px;
+	padding:0;
+	line-height: 3px;
+	height:3px;
+	font-size:3px;
+	background: url(images/line_bg_over.gif) 0 0 no-repeat transparent;
+	background-color:#f7f4ee;
+}
+.tree .line-over-last
+{
+	margin:0 0 0 -16px;
+	padding:0;
+	line-height: 3px;
+	height:3px;
+	font-size:3px;
+	background: url(images/line_bg_over_last.gif) 0 0 no-repeat transparent;
+	background-color:#f7f4ee;
+}
+.tree .folder-open
+{
+	margin-left:-16px;
+	background: url(images/collapsable.gif) 0 -2px no-repeat #fff;
+	background-color:#f7f4ee;
+}
+.tree .folder-open-last
+{
+	margin-left:-16px;
+	background: url(images/collapsable-last.gif) 0 -2px no-repeat #fff;
+	background-color:#f7f4ee;
+}
+.tree .folder-close
+{
+	margin-left:-16px;
+	background: url(images/expandable.gif) 0 -2px no-repeat #fff;
+	background-color:#f7f4ee;
+}
+.tree .folder-close-last
+{
+	margin-left:-16px;
+	background: url(images/expandable-last.gif) 0 -2px no-repeat #fff;
+	background-color:#f7f4ee;
+}
+.tree .doc
+{
+	margin-left:-16px;
+	background: url(images/leaf.gif) 0 -1px no-repeat #fff;
+	background-color:#f7f4ee;
+}
+.tree .doc-last
+{
+	margin-left:-16px;
+	background: url(images/leaf-last.gif) 0 -1px no-repeat #fff;
+	background-color:#f7f4ee;
+}
+.tree .ajax
+{
+	background: url(images/spinner.gif) no-repeat 0 0 #ffffff;
+	background-color:#f7f4ee;
+	height: 16px;
+	display:none;
+}
+.tree .ajax li
+{
+	display:none;
+	margin:0; 
+	padding:0;
+	background-color:#f7f4ee;
+}
+.tree .trigger
+{
+	display:inline;
+	margin-left:-32px;
+	width: 28px;
+	height: 11px;
+	cursor:pointer;
+}
+.tree .text
+{
+	cursor:pointer;
+}
+.tree .active
+{
+	cursor: default;
+	background-color:#F7BE77;
+}
+
+.tree .active{
+	background-color:#F7BE77;
+}
+.tree .active-node {
+	background-color:#CDDDED;
+	font-weight:bold;
+}
+.tree .sub-active-node {
+	font-weight:bold;
+}
+
+/*form .tree .sub-active-node {
+	background-color:#CDDDED;
+	font-weight:bold;
+	padding:1px 2px;
+}*/
