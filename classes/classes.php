@@ -633,7 +633,7 @@ class page implements ArrayAccess
 		}
 		if (count($urls)) 
 		{
-			$page_attr=db::getDB()->select('SELECT id,url,name,title,template,type from ?_items where url in (?a) order by url',$urls);//order by url обеспечит нам правильный порядок следования родителей
+			$page_attr=db::getDB()->select('SELECT id,url,name,title,template,type,pid from ?_items where url in (?a) order by url',$urls);//order by url обеспечит нам правильный порядок следования родителей
 			// а такую версию можно заюзать чтобы не выводить в дорожке недоступные текущему пользователю элементы.
 			//$page_attr=db::getDB()->select('SELECT id,url,name,title from ?_items where url in (?a) and protected<=? order by url',$urls,user::getAccessLevel());
 			foreach ($page_attr as $page_a)
@@ -647,7 +647,7 @@ class page implements ArrayAccess
 	function getChildren($filter='all')//для того чтобы получить только дочерние элементы с установленным флагом menu_item $filter='menu_item'
 	{
 		$children=array();
-		foreach (db::getDB()->select('SELECT id,url,name,title from ?_items where pid=?d and protected<=? {and menu_item=?} order by sort',
+		foreach (db::getDB()->select('SELECT id,url,name,title,pid from ?_items where pid=?d and protected<=? {and menu_item=?} order by sort',
 										$this->getId(),user::getAccessLevel(),$filter=='menu_item'?1:DBSIMPLE_SKIP) as $child)
 		{
 			$children[]=new page($child);
@@ -660,10 +660,14 @@ class page implements ArrayAccess
 	    if (array_key_exists($name,$this->page_attr)) {
 	        return $this->page_attr[$name];
 	    }
-	    return false;
+	    throw new Exception("Page parameter $name does not exist");
 	    
 	}
 	
+	public function __isset($name)
+	{
+		return array_key_exists($name,$this->page_attr);
+	}
 }
 
 class parent_page extends page 
@@ -792,7 +796,7 @@ class current_page extends page
 		if ($params=='') $params=config::getDefaultLang(); //для мультизычного проекта этого можно и не делать... но и лишний if можно не писать...
 		elseif (config::getDefaultLang()!='') $params=substr($params,1); //удаляем ведущий слэш в мультиязычной версии в некорневой странице (там его нет...)
 		
-		$page_attr=db::getDB()->selectRow('SELECT ?_items.id,url,name,title,description,create_date,protected,type,template,comments_count,filename as image_filename from ?_items left join ?_top_images on ?_top_images.id=?_items.id where url=?',$params);
+		$page_attr=db::getDB()->selectRow('SELECT ?_items.id,pid,url,name,title,description,create_date,protected,type,template,comments_count,filename as image_filename from ?_items left join ?_top_images on ?_top_images.id=?_items.id where url=?',$params);
 		//вернет пустой массив если строка не найдена
 		
 		if (count($page_attr)==0) throw new Exception('Page not found: '.$params,404);
@@ -871,18 +875,6 @@ class current_page extends page
 	function getType()
 	{
 		return $this->type;
-	}
-	
-	function __get($name)
-	{
-		if (array_key_exists($name,$this->additional_attr)) return $this->additional_attr[$name];
-		else throw new Exception('Get not exist additional page parameter '.$name);
-	}
-	
-	public function __isset($name) {
-		
-		return array_key_exists($name,$this->additional_attr);
-		
 	}
 	
 	function getPluginResult($plugin_name)
