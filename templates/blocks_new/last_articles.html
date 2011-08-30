@@ -1,15 +1,13 @@
 <div class="block block_articles">
-	<h1><a href="#">СТАТЬИ</a></h1>
+	<h1><a href="/articles">СТАТЬИ</a></h1>
     
     <div class="content">
         <ul>
-            <li><a href="#">Как купать ребенка во время простуды.</a></li>
-            <li><a href="#">Выбираем велосипед.</a></li>
-            <li><a href="#">Развивающие игрушки, какие они?</a></li>
-            <li><a href="#">Как правильно выбрать коляску.</a></li>
-            <li><a href="#">С ребенком на море. Что нужно помнить.</a></li>
+        {foreach from=$page->getLastArticles($params) item=item}
+            <li><a href="{$item->getUrl()}">{$item->getName()}</a></li>
+        {/foreach}
         </ul>
     
-     <div class="all"><a href="#">Все статьи</a></div>
+        <div class="all"><a href="/articles">Все статьи</a></div>
 	</div>
 </div>
