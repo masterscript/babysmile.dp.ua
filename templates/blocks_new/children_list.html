@@ -1,0 +1,18 @@
+<div id="articles">
+	<h1>{$page->getName()}</h1>
+    
+    <div class="content">
+    	<ul>
+    	{foreach from=$page->getChildrenList($params) item=item}
+        	<li>
+            	<span>{$item->getDate('mysql')|date_format:"%d.%m.%y"}</span>
+                <a href="{$item->getUrl()}">{$item->getName()}</a>
+            </li>
+        {/foreach}
+        </ul>
+    </div>
+    
+    {if isset($params.numerator_name)}
+		{include file='template_parts/page_numerator.html' numerator_name=$params.numerator_name}
+	{/if}
+</div>
