@@ -1,22 +1,18 @@
-<div class="block block_news">
-	<h1><a href="#">НОВОСТИ</a></h1>
+<div id="news">
+	<h1>{$page->getName()}</h1>
     
     <div class="content">
-        <ul>
-            <li>
-                <div class="date">20.12.10</div>
-                <div class="text"><a href="#">Министерство здравоохранения Украины запретит памперсы.</a></div>
+    	<ul>
+    	{foreach from=$page->list_news($params) item=item}
+        	<li>
+            	<span>{$item->getDate('mysql')|date_format:"%d.%m.%y"}</span>
+                <a href="{$item->getUrl()}">{$item->getName()}</a>
             </li>
-            <li>
-                <div class="date">19.12.10</div>
-                <div class="text"><a href="#">На новогодней елке будет проходить бесплатная раздача подарков всем детям.</a></div>
-            </li>
-            <li>
-                <div class="date">18.12.10</div>
-                <div class="text"><a href="#">Китайские коляски вредны для здоровья.</a></div>
-            </li>
+        {/foreach}
         </ul>
-        
-        <div class="all"><a href="#">Все новости</a></div>
-	</div>
+    </div>
+    
+    {if isset($params.numerator_name)}
+		{include file='template_parts/page_numerator.html' numerator_name=$params.numerator_name}
+	{/if}
 </div>
