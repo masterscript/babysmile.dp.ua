@@ -1,0 +1,16 @@
+<div class="block block_news">
+	<h1><a href="/news">НОВОСТИ</a></h1>
+    
+    <div class="content">
+        <ul>
+        {foreach from=$page->getLastNews($params) item=item}
+            <li>
+                <div class="date">{$item->getDate('mysql')|date_format:"%d.%m.%y"}</div>
+                <div class="text"><a href="{$item->getUrl()}">{$item->getName()}</a></div>
+            </li>
+        {/foreach}
+        </ul>
+        
+        <div class="all"><a href="/news">Все новости</a></div>
+	</div>
+</div>
