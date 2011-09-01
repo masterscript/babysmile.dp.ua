@@ -13,6 +13,7 @@ ul, li {margin:0; padding:0; list-style:none}
 .modal { display:none; }
 form.standart label { display:block; margin-top: 10px; color:#666; }
 form.standart input, form.standart textarea { display:block; width:300px; }
+form#userInfo #btnSubmit { margin:10px 0; }
 
 #header {width:932px; margin:0 auto; height:153px; overflow:hidden}
 	#header_logo {float:left; padding:51px 0 0 0}
