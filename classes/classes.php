@@ -152,6 +152,7 @@ class current_user
 	private $access_level;
 	private $login_state;
 	private $ip;
+	private $pageUrl;
 	private $cart, $cart_sum = 0, $cart_count = 0;	
 	
 	function __construct($login,$pass,$initType)
@@ -161,8 +162,11 @@ class current_user
 		{
 			if ($login!='')
 			{
-				$user_attr=db::getDB()->selectRow('SELECT users.id,group_name,name,access_level,email FROM ?_items as items, ?_users as users, ?_groups as groups WHERE items.id=users.id and users.group_id=groups.id and url=? and pass=?',
-													config::getConfigValue('URLS','userfolder').$login, md5($pass));
+				$user_attr=db::getDB()->selectRow(
+					'SELECT url,users.id,group_name,name,access_level,email
+					FROM ?_items as items, ?_users as users, ?_groups as groups
+					WHERE items.id=users.id and users.group_id=groups.id and (url=? OR email = ? ) and pass=?',
+					config::getConfigValue('URLS','userfolder').$login, $login, md5($pass));
 			}
 		}
 		elseif ($initType=='id')
@@ -179,6 +183,7 @@ class current_user
 				$this->access_level=$user_attr['access_level'];
 				$this->email=$user_attr['email'];
 				$this->id=$user_attr['id'];
+				$this->pageUrl = $user_attr['url'];
 				//db::getDB()->query('INSERT into ?_userlog(user_id,action_type,ip,viewed_url) values(?,?,?,?)',$this->id,'login',$this->ip,$_SERVER['REQUEST_URI']);//пришем вход в логи
 				db::getDB()->query('UPDATE ?_users SET lastvisit=NOW() WHERE id=?',$this->id);
 			}
@@ -293,7 +298,11 @@ class current_user
 	}
 	function getId()
 	{
-		return $this->id!=null?$this->id:0;
+		return $this->id?$this->id:0;
+	}
+	function getPageUrl()
+	{
+		return $this->pageUrl;
 	}
 	function getIp()
 	{
@@ -323,7 +332,6 @@ class user
 	
 	function init($login=null,$pass=null)
 	{
-		if (self::$current!=null) throw new Exception('Ну нельзя инитить юзера, если он уже проинициализирован. Видимо где-то баг.');
 		self::$current=new current_user($login,$pass,'form');
 		return self::$current;
 	}

@@ -13,6 +13,7 @@ ul, li {margin:0; padding:0; list-style:none}
 .modal { display:none; }
 form.standart label { display:block; margin-top: 10px; color:#666; }
 form.standart input, form.standart textarea { display:block; width:300px; }
+form#userInfo #btnSubmit { margin:10px 0; }
 
 #header {width:932px; margin:0 auto; height:153px; overflow:hidden}
 	#header_logo {float:left; padding:51px 0 0 0}
@@ -21,14 +22,16 @@ form.standart input, form.standart textarea { display:block; width:300px; }
 	
 	#header_slogan_inner {float:right; padding:50px 26px 0 0}
 	
-	#header_icons {float:right; padding:36px 81px 0 0; overflow:hidden}
+	#header_icons {float:right; padding:36px 81px 0 0; overflow:hidden; position: relative;}
 		#header_icons a {float:left; text-decoration:none}
 		#header_icons a.cart { position: relative; }
 		#header_icons a.cart span { position:absolute; left:15px; top:5px; font-size:90%; font-weight:bold; }
 		#formEnter div.switchable { font-size:70%; }
 		#formEnter div.switchable.enter { display:none; }
 		#formEnter label.pass_again { display:none; }
-		button.switchable.register { display:none; }
+		button.switchable.register, span.switchable.register { display:none; }
+		#header_icons #profileActions { position: absolute; font-size:90%; top:20px; left:0px; }
+		#header_icons #profileActions a { float:none; }
 
 #wrapper {width:786px; margin:0 auto; padding:0 73px}
 

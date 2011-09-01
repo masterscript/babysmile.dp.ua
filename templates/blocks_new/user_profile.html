@@ -1,0 +1,108 @@
+{assign var=info value=$page->getUserInfo()}
+<div id="news">
+	<h1>{$page->getName()}</h1>
+    
+    <div class="content">
+    	<script type="text/javascript" src="/js/jquery.form.js"></script>
+		<script type="text/javascript" src="/js/userInfo.js"></script>
+		<script type="text/javascript" src="/js/jquery.ui/jquery.ui.datepicker-ru.js"></script>
+		<script type="text/javascript" src="/js/userProfile.js"></script>
+		
+		<form action="{$page->getUrl()}?pname=ajaxUserInfoChange" method="post" id="userInfo" class="standart">
+			<label for="fio">Имя</label><input type="text" name="fio" value="{$info.fio}" />
+			<label for="email">E-mail</label><input type="text" name="email" value="{$info.email}" />
+			<label for="pass">Пароль</label><input type="password" name="pass" />
+			<label for="pass2">Повторите пароль</label><input type="password" name="pass2" />
+			<label for="birthday">Дата рождения</label><input readonly="readonly" type="text" name="birthday" value="{$info.birthday}" />
+			<label for="sex">Пол</label>
+			<select name="sex">
+				<option value="unknown"{if $info.sex eq 'unknown'} selected="selected"{/if}>неизвестно</option>
+				<option value="male"{if $info.sex eq 'male'} selected="selected"{/if}>мужской</option>
+				<option value="female"{if $info.sex eq 'female'} selected="selected"{/if}>женский</option>
+			</select>
+			<label for="phone">Телефон мобильный</label><input type="text" name="phone" value="{$info.phone}" />
+		    <label for="phone_home">Телефон домашний</label><input type="text" name="phone_home" value="{$info.phone_home}" />
+			<label for="region_id">Регион</label>
+			<select name="region_id">
+				{foreach from=$page->sources->getRegions() key=id item=name}
+					<option value="{$id}"{if $info.region_id eq $id} selected="selected"{/if}>{$name}</option>
+				{/foreach}
+			</select>
+		    <label for="city_id">Город</label>
+			<select name="city_id">
+				{foreach from=$page->sources->getCities($info.region_id) key=id item=name}
+					<option value="{$id}"{if $info.city_id eq $id} selected="selected"{/if}>{$name}</option>
+				{/foreach}
+			</select>
+			<label for="address">Адрес</label><input type="text" name="address" value="{$info.address}" />
+		    <label for="house_number">Номер дома</label><input type="text" name="house_number" value="{$info.house_number}" />
+		    <label for="app_number">Номер квартиры</label><input type="text" name="app_number" value="{$info.app_number}" />
+		    <label for="floor">Этаж</label><input type="text" name="floor" value="{$info.floor}" />
+		    <label for="intercom">Код подъезда</label><input type="text" name="intercom" value="{$info.intercom}" />
+			<label for="delivery">Доставка</label>
+			<select name="delivery">
+				<option value="self"{if $info.delivery eq 'self'} selected="selected"{/if}>самовывоз</option>
+				<option value="carrier"{if $info.delivery eq 'carrier'} selected="selected"{/if}>компания-перевозчик</option>
+		        <option value="courier"{if $info.delivery eq 'courier'} selected="selected"{/if}>курьер (только по Днепропетровску)</option>
+			</select>
+			<div id="carrier">
+				<label for="carrier_id">Компания-перевозчик</label>
+				<select name="carrier_id">
+				{foreach from=$page->sources->getCarriers($info.city_id) item=v}
+					<option value="{$v.id}"{if $v.id eq $info.carrier_id} selected="selected"{/if}>{$v.name}</option>
+				{foreachelse}
+					<option value="0">нет данных</option>
+				{/foreach}
+				</select>
+				<label for="carrier_office">офис</label>
+				<select name="carrier_office">
+				{foreach from=$page->sources->getCarrierOffices($info.carrier_id,$info.city_id) item=v}
+					<option value="{$v.id}"{if $v.id eq $info.carrier_office} selected="selected"{/if}>{$v.name}</option>
+				{foreachelse}
+					<option value="0">нет данных</option>
+				{/foreach}
+				</select>
+			</div>
+			<input id="btnSubmit" type="submit" name="add" value="Изменить" />
+			<div id="debug"></div>
+		</form>
+		
+		{assign var=orders value=$page->getUserOrders($params)}
+		{if $orders}
+		<div id="orders">
+		<h2>История заказов</h2>
+		<table>
+			<tr>
+		        <th>дата</th>
+		        <th>товар</th>
+		        <th>количество</th>
+		        <th>состояние</th>
+		    </tr>
+		{foreach from=$orders item=order key=code}
+			<tr style="background:#CCC">
+		    	<td colspan="4">
+		        	код заказа: {$code}
+		        </td>
+		    </tr>
+		    {foreach from=$order item=position}
+			<tr style="background:{cycle values="#eee,#fff"}">
+		        <td>{$position.buy_date}</td>
+		        <td><a href="{$position.url}" title="перейти к товару">{$position.name}</a></td>
+		        <td align="center">{$position.count}</td>
+		        <td>        
+		        	{if $position.status eq 0}
+		            	необработан
+		            {elseif $position.status eq 1}
+		            	на исполнении
+		            {else}
+		            	выполнен
+		            {/if}
+		        </td>
+		    </tr>
+		    {/foreach}
+		{/foreach}
+		</table>
+		</div>
+		{/if}
+    </div>
+</div>

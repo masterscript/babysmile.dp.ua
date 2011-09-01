@@ -1,0 +1,1 @@
+update items set protected = 1 where type = 'user';

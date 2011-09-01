@@ -2,10 +2,8 @@
 
 require_once 'classes/Admin/Errors.php';
 
-function ajax_user_info() {
+function ajaxUserInfoChange() {
     
-	ini_set("display_errors","Off");
-	
     @session_start();
 
     try {
@@ -49,8 +47,8 @@ function ajax_user_info() {
 	    if (!empty($_POST['pass'])) {
 	    	$pass = $_POST['pass'];
 	    	$pass2 = $_POST['pass2'];
-	    	if ($pass!=$pass2 || strlen($pass)<6) {
-	    		throw new FormException('Пароли должны совпадать. Пароль должен содержать не менее шести символов','pass');
+	    	if ($pass!=$pass2 || strlen($pass)<3) {
+	    		throw new FormException('Пароли должны совпадать. Пароль должен содержать не менее 3 символов','pass');
 	    	}
 	    } else {
 	    	$pass = false;
@@ -80,5 +78,3 @@ function ajax_user_info() {
     }
     
 }
-
-?>
