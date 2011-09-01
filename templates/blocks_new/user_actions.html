@@ -1,7 +1,11 @@
 ﻿<!-- Header icons START -->
+<script type="text/javascript" src="/js/userEnter.js"></script>
 <div id="header_icons">
 	{if $user->getState() eq 'login'}
-		<a href="/users/{$user->getNickName()}" title="Мой профиль"><img src="/images/header_logos/logo_1.png" alt="" width="47" height="59" /></a>
+		<a href="{$user->getPageUrl()}" title="Мой профиль" class="profile"><img src="/images/header_logos/logo_1.png" alt="" width="47" height="59" /></a>
+		<div id="profileActions">
+			<a href="{$user->getPageUrl()}">Мой профиль</a>&nbsp;&nbsp;&nbsp;<a href="?exit">Выход</a>
+		</div>
 	{else}
 		<a href="#" class="enter" title="Вход/Регистрация"><img src="/images/header_logos/logo_1.png" alt="" width="47" height="59" /></a>
 		<form id="formEnter" class="standart modal" method="post" action="/enter" title="Вход на сайт">

@@ -42,24 +42,14 @@ session_name('SID');
 require_once('../smarty/libs/Smarty.class.php');
 
 try {
-	//пользователи
-	
-	if (isset($_POST['login']) && isset($_POST['pass']))
-	{
-		$user=user::init($_POST['login'],$_POST['pass']);
-		if (user::getUserGroup())
-		{
-			session_name('SID');
-			$_SESSION['user']=$user;
-		}
-	}
-	elseif (isset($_SESSION['user'])) {
-	    if (!isset($_GET['exit'])) user::retrieve($_SESSION['user']);
-		else {
-			db::getDB()->query('INSERT into ?_userlog(user_id,action_type,ip,viewed_url) values(?,?,?,?)',$_SESSION['user']->getId(),'logout',$_SERVER['REMOTE_ADDR'],$_SERVER['REQUEST_URI']);
+	if (isset($_SESSION['user'])) {
+	    if (!isset($_GET['exit'])) {
+	    	user::retrieve($_SESSION['user']);
+	    } else {
+	    	db::getDB()->query('INSERT into ?_userlog(user_id,action_type,ip,viewed_url) values(?,?,?,?)',$_SESSION['user']->getId(),'logout',$_SERVER['REMOTE_ADDR'],$_SERVER['REQUEST_URI']);
 			unset ($_SESSION['user']);
 			unset($_SESSION['cart']);
-		}
+	    }
 	}
 	
 	//----------------------
