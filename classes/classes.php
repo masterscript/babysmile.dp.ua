@@ -162,8 +162,11 @@ class current_user
 		{
 			if ($login!='')
 			{
-				$user_attr=db::getDB()->selectRow('SELECT url,users.id,group_name,name,access_level,email FROM ?_items as items, ?_users as users, ?_groups as groups WHERE items.id=users.id and users.group_id=groups.id and url=? and pass=?',
-													config::getConfigValue('URLS','userfolder').$login, md5($pass));
+				$user_attr=db::getDB()->selectRow(
+					'SELECT url,users.id,group_name,name,access_level,email
+					FROM ?_items as items, ?_users as users, ?_groups as groups
+					WHERE items.id=users.id and users.group_id=groups.id and (url=? OR email = ? ) and pass=?',
+					config::getConfigValue('URLS','userfolder').$login, $login, md5($pass));
 			}
 		}
 		elseif ($initType=='id')
