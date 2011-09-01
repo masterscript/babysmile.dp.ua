@@ -24,8 +24,13 @@ $(function() {
 			{
 				text: 'Регистрация',
 				click: function() {
-					$.post('/register', $(this).serialize());
-					$(this).dialog("close");
+					$.post('?pname=ajaxUserRegister', $(this).serialize(), function(data) {
+						if (data.error) {
+							alert(data.error);
+						} else if (data.returnUrl) {
+							window.location = data.returnUrl;
+						}
+					}, 'json');
 				},
 				'class': 'switchable register'
 			},

@@ -28,7 +28,7 @@ form.standart input, form.standart textarea { display:block; width:300px; }
 		#formEnter div.switchable { font-size:70%; }
 		#formEnter div.switchable.enter { display:none; }
 		#formEnter label.pass_again { display:none; }
-		button.switchable.register { display:none; }
+		button.switchable.register, span.switchable.register { display:none; }
 		#header_icons #profileActions { position: absolute; font-size:90%; top:20px; left:0px; }
 		#header_icons #profileActions a { float:none; }
 

@@ -4,12 +4,16 @@
 	{if $user->getState() eq 'login'}
 		<a href="{$user->getPageUrl()}" title="Мой профиль" class="profile"><img src="/images/header_logos/logo_1.png" alt="" width="47" height="59" /></a>
 		<div id="profileActions">
-			<a href="{$user->getPageUrl()}">Мой профиль</a>&nbsp;&nbsp;&nbsp;<a href="?exit">Выход</a>
+			<a href="{$user->getPageUrl()}" title="Мой профиль">{$user->getEmail()}</a>&nbsp;&nbsp;&nbsp;<a href="?exit">Выход</a>
 		</div>
 	{else}
 		<a href="#" class="enter" title="Вход/Регистрация"><img src="/images/header_logos/logo_1.png" alt="" width="47" height="59" /></a>
 		<form id="formEnter" class="standart modal" method="post" action="/enter" title="Вход на сайт">
-			<label>Логин: <input type="text" name="login" /></label>
+			<label>
+				<span class="switchable enter">Логин/E-mail:</span>
+				<span class="switchable register">E-mail:</span>
+				<input type="text" name="login" />
+			</label>
 			<label>Пароль: <input type="password" name="pass" /></label>
 			<label class="switchable pass_again">Пароль еще раз: <input type="password" name="pass_again" /></label>
 			<div class="switchable register">Нет логина? <a href="#">Регистрация</a></div>
