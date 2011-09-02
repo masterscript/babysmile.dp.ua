@@ -1,0 +1,44 @@
+<div id="news">
+	<h1>{$page->getName()}</h1>
+    <div class="content">
+    	{if isset($smarty.get.words)}
+			<p>Найдено результатов по запросу <b>{$smarty.get.words|escape}</b>: {$page->getSearchResultCount()}</p>
+		{else}
+			<p>Не задан поисковый запрос</p>
+		{/if}
+		
+		{foreach from=$page->getSearchResult($params) item=child}
+			<table style='margin-top:20px;'>
+				<tr>
+					{if $child->getImage(true)}
+						<td valign="top" width="20%">			
+							<div class='image_feed'>
+								<a href='{$child->getUrl()}' title='{$child->getName()}'>
+									<img src='{$child->getImage(true)}' alt='{$child->getName()}' />
+								</a>
+							</div>				
+						</td>
+					{/if}
+					<td valign="top" width="80%">
+						<div style='margin:5px 0 0 10px;'>
+							<h2><a href='{$child->getUrl()}' title='{$child->getTitle()}'>{$child->getName()}</a></h2>
+							<div class='path_in'>
+								{foreach name=path from=$child->getParents() item=p_item}
+									{$p_item->getHTMLlink()} {if !$smarty.foreach.path.last}&gt;{/if}
+								{/foreach}
+							</div>
+							<div class='description'>
+								{$child->getDescription()}
+								<a href='{$child->getUrl()}' title='{$child->getName()}'>&gt;&gt;</a>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+		{/foreach}
+		
+    </div>
+    {if isset($params.numerator_name)}
+		{include file='template_parts/page_numerator.html' numerator_name=$params.numerator_name}
+	{/if}
+</div>
