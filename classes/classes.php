@@ -859,7 +859,7 @@ class current_page extends page
     
     protected function get_simple_construct($page_attr) //этот метод юзается в потомке 404 для вызова конструктора от класса page
     {
-        if (get_class($this)=='page_404' or get_class($this)=='page_403')
+        if (get_class($this)=='page_404' or get_class($this)=='page_403' or get_class($this)=='page_500')
         {
             parent::__construct($page_attr);
             $this->access=$page_attr['access'];        //необходимый уровень доступа (целое число)
@@ -1304,6 +1304,23 @@ class page_403 extends current_page
             'type'=>'_service',
             'template'=>'403',
             ));//все это очень спорно...
+    }
+}
+
+class page_500 extends current_page 
+{
+    function __construct($errorText)
+    {
+        parent::get_simple_construct(array(
+            'url'=>'/500',
+            'id'=>NULL,
+            'name'=>'Ошибка на сервере',
+        	'access'=>0,
+            'title'=>'500:Ошибка на сервере',
+            'type'=>'_service',
+            'template'=>'500',
+        	'errorText' => $errorText,
+            ));
     }
 }
 
