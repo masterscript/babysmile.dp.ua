@@ -480,7 +480,7 @@ class db //тут коннектимся к БД и храним наш объе
 			self::$db->setErrorHandler('databaseErrorHandler');
 			self::$db->setIdentPrefix(config::getDBValue('table_prefix')); 
 			//self::$db->setLogger('myLogger');
-			self::$db->query('SET CHARACTER SET utf8');//кодировочку не забываем...
+			self::$db->query('SET NAMES utf8');
 		}
 		return self::$db;
 	}
