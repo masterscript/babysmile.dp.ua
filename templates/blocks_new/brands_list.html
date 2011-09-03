@@ -1,0 +1,29 @@
+<div id="list">
+	<h1>{$page->getName()}</h1>
+    
+    <div class="content">
+    	{foreach name=cat from=$page->getBrands($params) item=item}
+        	{if $smarty.foreach.cat.iteration%3 eq 1 || $smarty.foreach.cat.first}
+    		<div class="row">
+    		{/if}
+	        	<div class="block">
+	        		{if $item->getImage(true)}
+	            	<div class="image">
+	            		<a href="{$item->url}">
+	            			<img src="{$item->getImage(true)}" alt="{$item->name|escape}" title="{$item->title|escape}" />
+	            		</a>
+	            	</div>
+	            	{/if}
+	                <div class="link"><a href="{$item->url}">{$item->name|escape}</a></div>
+	                <div class="info">{$item->description|escape|nl2br}</div>
+	            </div>
+	        {if $smarty.foreach.cat.iteration%3 eq 0 || $smarty.foreach.cat.last}
+        	</div>
+        	{/if}
+        {/foreach}
+    </div>
+    
+    {if isset($params.numerator_name)}
+		{include file='template_parts/page_numerator.html' numerator_name=$params.numerator_name}
+	{/if}
+</div>
