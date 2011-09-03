@@ -5,6 +5,8 @@ function getGoodList($obj) {
 	if ($obj->getType() == 'biz') {
 		$filters['vendors'] = array($obj->getId());
 	}
+	
+	$additionalFilters = $obj->issetParam('add_filters') ? ' AND ' . $obj->getParam('add_filters') : '';
 
 	$goodsCount = db::getDB()->selectCell(
 		'SELECT COUNT(i.id) FROM ?_items i
@@ -15,9 +17,9 @@ function getGoodList($obj) {
 		{AND g.price>=? AND g.price<=?}
 		{AND i.name LIKE ?}
 		{AND g.biz_id IN (?a)}
-		{AND (price_old > price AND price_old > ?)}',
+		{AND (price_old > price AND price_old > ?)}' . $additionalFilters,
 		'good', 'good_set', 'subcategory', 'clothers_container', user::getAccessLevel(),
-		$obj->getType() == 'biz' ? DBSIMPLE_SKIP : $obj->getUrl() . '/%',
+		$obj->getTemplate() != 'category' ? DBSIMPLE_SKIP : $obj->getUrl() . '/%',
 		$filters['price']['filtered'] ? $filters['price']['min'] : DBSIMPLE_SKIP, $filters['price']['filtered'] ? $filters['price']['max'] : DBSIMPLE_SKIP,
 		$filters['name'] ? $filters['name'] : DBSIMPLE_SKIP,
 		$filters['vendors'] ? $filters['vendors'] : DBSIMPLE_SKIP,
@@ -40,10 +42,10 @@ function getGoodList($obj) {
 		{AND g.price>=? AND g.price<=?}
 		{AND i.name LIKE ?}
 		{AND g.biz_id IN (?a)}
-		{AND (price_old > price AND price_old > ?)}
+		{AND (price_old > price AND price_old > ?)}' . $additionalFilters . '
 		ORDER BY {?f,} type, sort, create_date DESC {limit ?d,?d}',
 		'good', 'good_set', 'subcategory', 'clothers_container', user::getAccessLevel(),
-		$obj->getType() == 'biz' ? DBSIMPLE_SKIP : $obj->getUrl() . '/%',
+		$obj->getTemplate() != 'category' ? DBSIMPLE_SKIP : $obj->getUrl() . '/%',
 		$filters['price']['filtered'] ? $filters['price']['min'] : DBSIMPLE_SKIP, $filters['price']['filtered'] ? $filters['price']['max'] : DBSIMPLE_SKIP,
 		$filters['name'] ? $filters['name'] : DBSIMPLE_SKIP,
 		$filters['vendors'] ? $filters['vendors'] : DBSIMPLE_SKIP,

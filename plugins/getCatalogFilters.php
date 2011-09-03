@@ -53,5 +53,10 @@ function getCatalogFilters($page) {
 			$_GET['price_order'] : false
 	);
 	
+	if ($page->issetParam('filters_preset')) {
+		$preset = explode(';', $page->getParam('filters_preset'));
+		$filters = array_merge($filters, array_fill_keys($preset, true));
+	}
+	
 	return $filters;    
 }
