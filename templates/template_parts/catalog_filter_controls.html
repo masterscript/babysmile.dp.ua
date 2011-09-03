@@ -24,7 +24,7 @@
 		        		<label>название: </label>
 		        	</td>
 		        	<td width="533">
-						<input name="name" type="text" value="buzz"{if !$smarty.get.name} disabled="disabled"{/if} class="canDisabled" />
+						<input name="name" type="text" {if !$smarty.get.name} disabled="disabled"{/if} class="canDisabled" />
 					</td>
 		        </tr>
 		    	<tr class="vendors">
@@ -42,7 +42,7 @@
 		        	<td width="140"{if !$smarty.get.discount} class="grey"{/if}>
 		        		<label>скидка</label>
 		        	</td>
-		        	<td width="533"><input name="discount" type="checkbox" value="1"{if $smarty.get.discount} checked="checked"{else} disabled="disabled"{/if} class="canDisabled" /></td>
+		        	<td width="533"><input name="discount" type="checkbox" value="1"{if $filters.discount} checked="checked"{else} disabled="disabled"{/if} class="canDisabled" /></td>
 		        </tr>
 		    </table>
 		        
