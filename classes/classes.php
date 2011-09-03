@@ -1012,7 +1012,17 @@ class current_page extends page
 				$num=array('name'=>$i,'link'=>$this->getUrl().'?'.$name.'='.$i);
 				foreach ($_GET as $key=>$value)
 				{
-					if ($key!=$name && $key!='params') $num['link'].='&'.$key.'='.$value;//params - туда запихивается url
+					if ($key!=$name && $key!='params') {
+						if (is_array($value)) {
+							$values = array();
+							foreach ($value as $v) {
+								$values[] = $key.'[]='.$v;
+							}
+                            $num['link'].='&'.implode('&',$values);
+						} else {
+						    $num['link'].='&'.$key.'='.$value;//params - туда запихивается url
+                        }
+					}
 				}
 				$numerator[]=$num;
 			}
