@@ -11,7 +11,13 @@ function getCatalogFilters($page) {
 		SELECT MIN(price) mmin, MAX(price) mmax
 		FROM ?_goods g
 		JOIN ?_items i ON i.id = g.id
-		WHERE url LIKE ? AND price > 0', $page->getURL() . '/%');
+		WHERE
+			price > 0
+			{AND url LIKE ?}
+			{AND biz_id = ?d}',
+		 $page->getType() != 'biz' ? $page->getURL() . '/%' : DBSIMPLE_SKIP,
+		 $page->getType() == 'biz' ? $page->getId() : DBSIMPLE_SKIP
+	);
 	
 	$price = isset($_GET['price']);
 	$filters['price']['min'] = isset($_GET['priceMin']) ? (int)$_GET['priceMin'] : $filters['price']['mmin'];
@@ -25,8 +31,12 @@ function getCatalogFilters($page) {
 		'SELECT v.* FROM ?_items i
 		JOIN ?_goods g ON g.id = i.id
 		JOIN ?_items v ON g.biz_id = v.id		
-		WHERE i.url LIKE ?
-		GROUP BY v.id', $page->getURL() . '/%'
+		WHERE
+			{i.url LIKE ?}
+			{g.biz_id = ?d}
+		GROUP BY v.id',
+		$page->getType() != 'biz' ? $page->getURL() . '/%' : DBSIMPLE_SKIP,
+		$page->getType() == 'biz' ? $page->getId() : DBSIMPLE_SKIP
 	);
 	
 	if ($filters['vendors']) {
