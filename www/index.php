@@ -61,18 +61,24 @@ try {
 } catch (Exception $e) {
 	if ($e->getCode()=='404') {
 		header('Status: 404 Not Found');
-		header('HTTP/1.0 404 Not Found');
+		header('HTTP/1.1 404 Not Found');
         $page=new page_404();
         $page->executeModules();
         $page->display();
 	} elseif ($e->getCode()=='403') {
 		header('Status: 403 Forbidden');
-		header('HTTP/1.0 403 Forbidden');
+		header('HTTP/1.1 403 Forbidden');
         $page=new page_403((int)$e->getMessage());//первым в сообщении будет необходимый уровень доступа (целое число)
         $page->executeModules();
         $page->display();
 	} else {
-	    throw new Exception($e->getMessage());
+	    header('Status: 500 Internal Server Error');
+		header('HTTP/1.1 500 Internal Server Error');
+		$errorText = $e->getMessage() . $e->getTraceAsString();
+		mail('andrey.garbuz@gmail.com', 'SiteEngine - Babysmile', $errorText);
+        $page=new page_500($e->getMessage());
+        $page->executeModules();
+        $page->display();
 	}
 }
 
