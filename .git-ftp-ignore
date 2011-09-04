@@ -1,0 +1,5 @@
+.git-ftp-ignore
+www_admin/i
+www_admin/.htaccess
+.gitignore
+
