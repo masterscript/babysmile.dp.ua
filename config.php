@@ -20,7 +20,7 @@ if (!defined("PATH_SEPARATOR"))
 define("SITE_SUBDIR","");
 define("SITE_URL",$_SERVER['HTTP_HOST'].SITE_SUBDIR);
 define("SYSTEM_PATH",dirname(__FILE__));
-define("PEAR_PATH",SYSTEM_PATH."/libs/PEAR");
+define("PEAR_PATH",SYSTEM_PATH."/php");
 define("SITE_PATH",$_SERVER['DOCUMENT_ROOT']."/".SITE_SUBDIR);
 define("FRONT_SITE_PATH",str_replace('admin.babysmile','babysmile',$_SERVER['DOCUMENT_ROOT']));
 define("FRONT_SITE_URL","http://babysmile.dp.ua");
