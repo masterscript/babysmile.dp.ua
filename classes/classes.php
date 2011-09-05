@@ -213,6 +213,8 @@ class current_user
 	{
 		@session_start();
 		$this->cart = array();
+		$this->cart_count = 0;
+		$this->cart_sum = 0;
 		if (isset($_SESSION['cart'])) {
 			foreach ($_SESSION['cart'] as $key=>$cart) {
 				$props = db::getDB()->selectRow('
@@ -240,7 +242,7 @@ class current_user
 				$this->cart_sum += $this->cart[$key]['price_sum'];
 			}
 			require_once 'smarty/libs/plugins/modifier.convert_currency.php';
-			$this->cart_sum = smarty_modifier_convert_currency($this->cart_sum);			
+			$this->cart_sum = smarty_modifier_convert_currency($this->cart_sum);
 		}
 	}
 	

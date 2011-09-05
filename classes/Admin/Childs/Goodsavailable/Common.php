@@ -1,7 +1,5 @@
 <?php
 
-require_once 'PEAR/Pager/Pager.php';
-
 class Admin_Childs_Goodsavailable_Common extends Admin_Actions_Abstract {
 	
     /**
