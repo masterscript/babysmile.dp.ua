@@ -48,7 +48,6 @@ try {
 	    } else {
 	    	db::getDB()->query('INSERT into ?_userlog(user_id,action_type,ip,viewed_url) values(?,?,?,?)',$_SESSION['user']->getId(),'logout',$_SERVER['REMOTE_ADDR'],$_SERVER['REQUEST_URI']);
 			unset ($_SESSION['user']);
-			unset($_SESSION['cart']);
 	    }
 	}
 	
