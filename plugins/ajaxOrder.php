@@ -8,15 +8,10 @@ function ajaxOrder()
 {
     @session_start();
     
-	if (isset($_POST['doClearCart'])) {
-    	unset($_SESSION['cart']);
-    	echo '{is_errors:0, clear:1}';
-    	return ;
-    }
-
     try {
     	
-	    if (isset($_POST['doOrder']) && isset($_SESSION['cart'])) {
+    	$user = user::getCurrentUser();
+	    if ($_POST && $user->getCart()) {
 	    	
 	    	$phone = $_POST['phone'];
 	    	$phone_home = $_POST['phone_home'];
@@ -66,13 +61,12 @@ function ajaxOrder()
 	    	
 	    	db::getDB()->query('UPDATE user_orders SET code = ? WHERE id = ?d',$order_code,$order_id);
 	    	
-	    	foreach ($_SESSION['cart'] as $cart) {
+	    	foreach ($user->getCart() as $cart) {
 	    		db::getDB()->query('
 	    			INSERT INTO user_purchase (code,good_id,count,buy_date)
 	    			VALUES (?,?d,?d,?)
-	    		',$order_code,$cart['good_id'],$cart['count'],date('Y-m-d H:i:s'));
+	    		',$order_code,$cart['good']->getId(),$cart['count'],date('Y-m-d H:i:s'));
 	    	}
-	    	
 	    	// посылаем письмо админу
 	    	$recipients = 'babysmile@ua.fm';
 	        $headers['From']    = 'robot@babysmile.dp.ua';
@@ -185,7 +179,8 @@ function ajaxOrder()
 		    	$data['in_words'] = num2str($data['sum']);
 	        	$data['account'] = '№ СФ-'.$order_code.' от '.date('d.m.Y').' г.';
 				$data['valid_date'] = date("d.m.Y",strtotime(date("Y-m-d", strtotime(date("Y-m-d"))) . " +3 day"));
-	        	generateRtf($data)->save($order_code.'.rtf');
+				$accountFile = $_SERVER['DOCUMENT_ROOT'] . '/../tmp/' . $order_code.'.rtf';
+	        	generateRtf($data)->save($accountFile);
 		        $mime->addAttachment($order_code.'.rtf','application/octet-stream');
 		        
 	        }	        
@@ -213,10 +208,11 @@ function ajaxOrder()
     		$headers = $mime->headers($headers);
     		$mail->send($recipients, $headers, $body);
     		
-	        @unlink($order_code.'.rtf');
+	        @unlink($accountFile);
 	        unset($_SESSION['cart']);
+	        $user->calcCart();
 	        
-	        echo json_encode(array('is_errors'=>0,'sent'=>1,'order_code'=>$order_code));
+	        echo json_encode(array('is_errors'=>0,'order_code'=>$order_code));
 	        
 	    }
     	

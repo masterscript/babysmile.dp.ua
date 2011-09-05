@@ -12,17 +12,12 @@ $(document).ready (function() {
 				$('#userInfo input[name="'+data.field+'"]').parent('label').css("color", "red");
 				alert(data.error_msg);
 			} else {
-				$("#cart").html('');
-				if (data.clear) {
-					alert('Корзина очищена');
-					$("#emptyCart").show();
-				}
-				if (data.sent) {								
-					$("#emptyCart").hide();
-					$("#successOrder").show();
-				}
-				$('#userInfo').dialog("close");
-				refreshCart;
+				$("#cartForm").fadeOut();
+				$("#emptyCart").hide();
+				$("#message-register").hide();
+				$("#successOrder").show();
+				refreshCart();
+				$('#userInfo').dialog('close');
 			}
 			$("#userInfo .submit").removeAttr("disabled");
 		},
