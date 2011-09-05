@@ -238,7 +238,7 @@ form#userInfo #btnSubmit { margin:10px 0; }
 
 
 #footer {height:115px; border-top:solid 9px #d5b997; text-align:center; margin:9px 0 0 0; font-size:16px; color:#ae793c; padding:20px 0 0 0}
-
+	#footer #counters {text-align: center; margin-top:10px;}
 
 h1 {font-family:"Arial Black", Arial, Helvetica, sans-serif; font-size:32px; color:#d4babd; margin:0; padding:0}
 	h1 a {color:#d4babd}
