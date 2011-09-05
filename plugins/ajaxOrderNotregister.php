@@ -10,6 +10,7 @@ function ajaxOrderNotregister()
     
     try {
     	
+    	$user = user::getCurrentUser();
 	    if ($_POST && isset($_SESSION['cart'])) {
 	    	
 	    	$phone = $_POST['phone'];
@@ -35,11 +36,11 @@ function ajaxOrderNotregister()
 	    	
 	    	db::getDB()->query('UPDATE user_orders SET code = ? WHERE id = ?d',$order_code,$order_id);
 	    	
-	    	foreach ($_SESSION['cart'] as $cart) {
+	    	foreach ($user->getCart() as $cart) {
 	    		db::getDB()->query('
 	    			INSERT INTO user_purchase (code,good_id,count,buy_date)
 	    			VALUES (?,?d,?d,?)
-	    		',$order_code,$cart['good_id'],$cart['count'],date('Y-m-d H:i:s'));
+	    		',$order_code,$cart['good']->getId(),$cart['count'],date('Y-m-d H:i:s'));
 	    	}
 	    	
 	    	// посылаем письмо админу
@@ -104,7 +105,9 @@ function ajaxOrderNotregister()
     		$mail->send($recipients, $headers, $body);
     		
 	        unset($_SESSION['cart']);
-	        echo json_encode(array('is_errors'=>0,'sent'=>1,'order_code'=>$order_code));
+	        $user->calcCart();
+	        
+	        echo json_encode(array('is_errors'=>0,'order_code'=>$order_code));
 	        
 	    }
     	

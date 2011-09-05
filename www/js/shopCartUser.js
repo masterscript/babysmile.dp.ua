@@ -12,32 +12,24 @@ $(document).ready (function() {
 				$("#userInfo label[for='"+data.field+"']").css("color","red");
 				alert(data.error_msg);							
 			} else {
-				$("#cartBlock").fadeOut();
-				if (data.clear) {
-					alert('Корзина очищена');
-					$("#emptyCart").show();
-				}
-				if (data.sent) {
-					var dowloadLink = '<div><a target="_blank" href="/downloads/account?order_code='+data.order_code+'">загрузить счет</a></div>';
-					$.getJSON("?pname=ajaxIsCityTop",{city_id: $("select[name='city_id']").val()}, function(data){
-						if (data.top!=1) {
-							$("#successOrder").append(dowloadLink);
-						}
-						$.blockUI({ 
-							message: '<h2>Ваш заказ добавлен в работу</h2>', 
-							timeout: 2000 
-						});
-						$("#emptyCart").hide();
-						$("#successOrder").show();
-					});								
-				}							
+				var dowloadLink = '<div><a target="_blank" href="/downloads/account?order_code='+data.order_code+'">загрузить счет</a></div>';
+				$.getJSON("?pname=ajaxIsCityTop",{city_id: $("select[name='city_id']").val()}, function(data){
+					if (data.top!=1) {
+						$("#successOrder").append(dowloadLink);
+					}
+				});
+				$("#cartForm").fadeOut();
+				$("#emptyCart").hide();
+				$("#successOrder").show();
+				refreshCart();
+				$('#userInfo').dialog('close');
 			}
 			$("#userInfo .submit").removeAttr("disabled");
 		},
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
+		/*error: function (XMLHttpRequest, textStatus, errorThrown) {
 			alert('error: '+textStatus);
-			$("#debug").html(XMLHttpRequest.responseText);
-		},		
+			console.log(errorThrown);
+		},	*/	
 		dataType: 'json',
 		resetForm: false
 	};	
@@ -50,6 +42,23 @@ $(document).ready (function() {
 				$("#sendAccount").attr("checked","checked").fadeIn().css("display","inline").next("label").css("display","inline").fadeIn();
 			}
 		});
+	});
+	
+	$('#userInfo').dialog({
+		modal: true,
+		autoOpen: false,
+		width: 350,
+		resizable: false,
+		show: 'explode',
+		hide: 'explode',
+		buttons: {
+			'Завершить': function() {
+				$(this).ajaxForm(options).submit();				
+			},
+			'Отменить': function() {
+				$(this).dialog("close");
+			}
+		}
 	});
 	
 });
