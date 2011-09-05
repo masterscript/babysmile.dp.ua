@@ -2,6 +2,7 @@
 	<h1>{$page->getName()}</h1>
     
     <div class="content">
+    	<div>{$page->getContent()}</div>
     	<ul>
     	{foreach from=$page->getChildrenList($params) item=item}
         	<li>

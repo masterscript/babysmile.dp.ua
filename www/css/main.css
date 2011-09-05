@@ -18,7 +18,7 @@ form#userInfo #btnSubmit { margin:10px 0; }
 #header {width:932px; margin:0 auto; height:153px; overflow:hidden; background: url(../images/beta.gif) left top no-repeat;}
 	#header_logo {float:left; padding:51px 0 0 0}
 	
-	#header_slogan {float:right; padding:41px 17px 0 0}
+	#header_slogan {float:right; padding:41px 17px 0 0; font-size: 120%; font-weight: bold;}
 	
 	#header_slogan_inner {float:right; padding:50px 26px 0 0}
 	
