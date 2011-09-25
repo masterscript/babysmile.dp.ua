@@ -64,11 +64,12 @@ form#userInfo #btnSubmit { margin:10px 0; }
 		#main_categories ul li {display:inline}
 		#main_categories ul a {display:block; padding:6px 60px 6px 0; margin:2px 1px; background-image:url(../images/main_categories_list_bg.png); background-repeat:no-repeat; background-position:165px 50%; overflow:hidden}
 		#main_categories ul a:hover {background-color:#ffebcd; border:solid 1px #d1ae83; padding:5px 59px 5px 0; background-image:url(../images/main_categories_list_current_bg.png); text-decoration:none}
-	#main_categories div.pic {float:right; margin:0 26px 0 0}
+	#main_categories div.pic {float:right; margin:0 33px 10px 0}
 		#main_categories div.pic img {border:solid 7px #c0b5d8}
 
 #triple {border-top:solid 9px #c0b5d8; margin:11px 0 0 0; padding:5px 0 0 0; background-image:url(../images/triple_center_bg.gif); background-position:50% 63px; background-repeat:no-repeat; overflow:hidden}
 	#triple a.block {float:left}
+	#triple a.block {font-family:"Arial Black", Arial, Helvetica, sans-serif; font-size:32px; color:#d4babd; margin:0; padding:0}
 	#triple a.block:hover {color:#d4babd}
 	#triple a.block h1 {margin:0 0 5px 0}
 	#triple a.block img {border:solid 8px #c0b5d8}
@@ -84,6 +85,11 @@ form#userInfo #btnSubmit { margin:10px 0; }
 	#double_popular a.block img {border:solid 7px #d5b997}
 	#double_popular a.block h1 {padding:0 0 9px 0}
 
+	#double_popular div.link_popular {float:left; margin:0 0 0 21px}
+	#double_popular div.link_popular a {font-family:"Arial Black", Arial, Helvetica, sans-serif; font-size:32px; color:#d4babd; margin:0; padding:0}
+	#double_popular div.link_hits {float:right; margin:0 21px 0 0; text-align:right}
+	#double_popular div.link_hits a {font-family:"Arial Black", Arial, Helvetica, sans-serif; font-size:32px; color:#d4babd; margin:0; padding:0}
+
 #double_text {padding:28px 0 0 0; font-family:Arial, Helvetica, sans-serif; font-size:13px; overflow:hidden}
 	#double_text div.block {width:378px; min-height:255px}
 	#double_text a {color:#231f20}
@@ -91,17 +97,27 @@ form#userInfo #btnSubmit { margin:10px 0; }
 		#double_text h1 a {color:#ddc6ab}
 	#double_text div.content {border-top:solid 9px #d5b997; margin:4px 0 0 0}
 	#double_text div.all {text-align:center; padding:7px 0 0 0}
+
+	#double_text div.link_news {text-align:left; padding:0 0 0 21px}
+	#double_text div.link_news a {font-family:"Arial Black", Arial, Helvetica, sans-serif; font-size:32px; color:#d4babd; margin:0; padding:0}
+	#double_text div.link_articles {text-align:right; padding:0 21px 0 0}
+	#double_text div.link_articles a {font-family:"Arial Black", Arial, Helvetica, sans-serif; font-size:32px; color:#d4babd; margin:0; padding:0}
+
 		#double_text div.all a {color:#624199}
+
 	#double_text div.block_news {float:left; background-image:url(../images/double_text_news_bg.gif); background-repeat:no-repeat; background-position:253px 122px}
 		#double_text div.block_news h1 {padding:0 0 0 21px}
 		#double_text div.block_news ul {padding:16px 20px 0 44px}
 		#double_text div.block_news ul li {padding:0 0 12px 0; overflow:hidden}
 		#double_text div.date {float:left; width:60px; color:#624199}
 		#double_text div.text {margin:0 0 0 60px}
+
 	#double_text div.block_articles {float:right; background-image:url(../images/double_text_articles_bg.gif); background-repeat:no-repeat; background-position:227px 138px}
 		#double_text div.block_articles h1 {padding:0 21px 0 0; text-align:right}
 		#double_text div.block_articles ul {padding:16px 0 0 42px}
 		#double_text div.block_articles ul li {padding:0 0 10px 0}
+
+
 
 #news {margin:17px 0 0 0}
 	#news h1 {text-align:right; color:#ddc6ab; padding:0 12px 0 0; line-height:40px}
@@ -119,6 +135,8 @@ form#userInfo #btnSubmit { margin:10px 0; }
 		#articles div.content ul.right {float:right; width:350px}
 		#articles div.content li {margin:9px 0 10px 0}
 		#articles div.content a {background-image:url(../images/articles_list_bg.gif); background-repeat:no-repeat; background-position:0 50%; padding:0 0 0 35px; color:#231f20}
+
+		
 
 #cart {margin:2px 0 0 0}
 	#cart h1 {text-align:right; padding:0 12px 0 0; line-height:40px}

@@ -1,4 +1,5 @@
 <!-- Main page categories START -->
+<script type="text/javascript" src="/js/toggle.js"></script>
 <div id="main_categories">
 	<ul>
 	{foreach name=menu from=$page->catalog_menu($params) item=menu_item}
@@ -6,5 +7,8 @@
     {/foreach}
     </ul>
     <div class="pic"><img src="/images/main_categories_image.jpg" alt="" width="515" height="257" /></div>
+    <div style="width: 515px; float:right">
+    {$page->getToggleContent($params)}
+    </div>
 </div>
 <!-- Main page categories END -->
