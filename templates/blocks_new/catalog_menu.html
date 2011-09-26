@@ -1,14 +1,21 @@
-<!-- Main page categories START -->
+﻿<!-- Main page categories START -->
 <script type="text/javascript" src="/js/toggle.js"></script>
+<script type="text/javascript" src="/js/catalog_category_img_show.js"></script>
 <div id="main_categories">
 	<ul>
 	{foreach name=menu from=$page->catalog_menu($params) item=menu_item}
-    	<li><a href="{$menu_item.url}" title="{$menu_item.title}">{$menu_item.name}</a></li>
+    	<li><a href="{$menu_item.url}" class="catalog_category" id="img_{$menu_item.id}" title="{$menu_item.title}">{$menu_item.name}</a></li>
     {/foreach}
     </ul>
-    <div class="pic"><img src="/images/main_categories_image.jpg" alt="" width="515" height="257" /></div>
+    <div class="pic"><img src="/images/main_categories_image.jpg" id="src_img" alt="" width="515" height="300" /></div>
     <div style="width: 515px; float:right">
-    {$page->getToggleContent($params)}
+    {assign var="cont" value=$page->getFirstParagraphFromContent($params)}
+	{$cont[0]}
+	{if $cont[1] != ''}
+		<div style="display: none;" id="effect">
+		{$cont[1]}
+		</div><a href="#" onclick="return false;" style="float:right" id="desctoggle">Показать/скрыть полное описание</a>
+	{/if}
     </div>
 </div>
 <!-- Main page categories END -->

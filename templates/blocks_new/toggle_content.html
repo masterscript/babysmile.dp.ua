@@ -1,4 +1,11 @@
-<script type="text/javascript" src="/js/toggle.js"></script>
+﻿<script type="text/javascript" src="/js/toggle.js"></script>
 <div style="margin: 0 0 35px 0">
-	{$page->getToggleContent($params)}
+    {assign var="cont" value=$page->getFirstParagraphFromContent($params)}
+	{$cont[0]}
+	{if $cont[1] != ''}
+		<div style="display: none;" id="effect">
+		{$cont[1]}
+		</div><a href="#" onclick="return false;" style="float:right" id="desctoggle">Показать/скрыть полное описание</a>
+	{/if}
+
 </div>
