@@ -1,10 +1,10 @@
 ﻿<script type="text/javascript" src="/js/toggle.js"></script>
 <div style="margin: 0 0 35px 0">
-    {assign var="cont" value=$page->getFirstParagraphFromContent($params)}
-	{$cont[0]}
-	{if $cont[1] != ''}
+    {assign var="aSplitedText" value=$page->getFirstParagraphFromContent($params)}
+	{$aSplitedText.firstParagraph}
+	{if $aSplitedText.otherContent != ''}
 		<div style="display: none;" id="effect">
-		{$cont[1]}
+		{$aSplitedText.otherContent}
 		</div><a href="#" onclick="return false;" style="float:right" id="desctoggle">Показать/скрыть полное описание</a>
 	{/if}
 

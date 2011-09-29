@@ -1,4 +1,4 @@
-﻿<!-- Main page categories START -->
+<!-- Main page categories START -->
 <script type="text/javascript" src="/js/toggle.js"></script>
 <script type="text/javascript" src="/js/catalog_category_img_show.js"></script>
 <div id="main_categories">
@@ -9,11 +9,11 @@
     </ul>
     <div class="pic"><img src="/images/main_categories_image.jpg" id="src_img" alt="" width="515" height="300" /></div>
     <div style="width: 515px; float:right">
-    {assign var="cont" value=$page->getFirstParagraphFromContent($params)}
-	{$cont[0]}
-	{if $cont[1] != ''}
+    {assign var="aSplitedText" value=$page->getFirstParagraphFromContent($params)}
+	{$aSplitedText.firstParagraph}
+	{if $aSplitedText.otherContent != ''}
 		<div style="display: none;" id="effect">
-		{$cont[1]}
+		{$aSplitedText.otherContent}
 		</div><a href="#" onclick="return false;" style="float:right" id="desctoggle">Показать/скрыть полное описание</a>
 	{/if}
     </div>

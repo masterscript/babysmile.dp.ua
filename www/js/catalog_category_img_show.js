@@ -1,4 +1,3 @@
-// JavaScript Document
 $(document).ready(function(){
         $('a.catalog_category').hover(
             function() {
@@ -7,7 +6,6 @@ $(document).ready(function(){
                 $('#src_img').attr('src', '/images/img_cat_eng/'+num+'.jpg');
             },
             function() { 
-            //    $('#src_img').attr('src', '/images/img_cat_eng/'+num+'.jpg');
 		 $('#src_img').attr('src', '/images/main_categories_image.jpg'); 
             }
         );    
